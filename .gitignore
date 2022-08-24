@@ -1,0 +1,36 @@
+# Dependency directory
+node_modules
+
+# local env variables
+.env
+
+# coverage
+coverage
+.nyc_output
+
+# cache
+.eslintcache
+
+# hardhat
+artifacts
+cache
+
+# macOS
+.DS_Store
+*.icloud
+
+# redis
+dump.rdb
+
+# typechain
+typechain
+
+# typescript
+dist
+
+# yarn
+yarn-error.log
+
+# VS Code
+.vscode
+
