@@ -1,6 +1,6 @@
 {
   "name": "@gelatonetwork/relayer-context",
-  "version": "0.1.1-0",
+  "version": "0.1.2-0",
   "description": "Contains solidity helpers for implementing the Relayer Fee Context",
   "files": [
     "contracts/*.sol",
@@ -19,7 +19,7 @@
     "lint:ts": "eslint -c .eslintrc.json --ext \"**/*.ts\" \"**/*.test.ts\"",
     "lint:sol": "solhint 'contracts/**/*.sol'",
     "prepare": "husky install",
-    "prepublishOnly": "rm -rf node_modules && yarn install && yarn clean && yarn build && yarn format && yarn lint",
+    "prepublishOnly": "yarn build && yarn format && yarn lint",
     "test": "npx hardhat test",
     "verify": "npx hardhat etherscan-verify"
   },
@@ -32,6 +32,7 @@
     "@openzeppelin/contracts": "4.7.3"
   },
   "devDependencies": {
+    "@gelatonetwork/relayer-context": "^0.1.1-0",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-waffle": "2.0.3",
     "@tsconfig/recommended": "1.0.1",
