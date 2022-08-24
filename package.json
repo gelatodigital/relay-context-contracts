@@ -5,6 +5,7 @@
   "files": [
     "contracts/*.sol",
     "contracts/constants",
+    "contracts/functions",
     "contracts/lib"
   ],
   "scripts": {

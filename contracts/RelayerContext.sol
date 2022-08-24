@@ -14,7 +14,7 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
  *     feeToken: -40
  *     fee: -20
  */
-abstract contract RelayerFeeContext {
+abstract contract RelayerContext {
     using TokenUtils for address;
 
     /// @dev Only use with a safe whitelisted trusted forwarder contract (e.g. GelatoRelay)
@@ -28,7 +28,7 @@ abstract contract RelayerFeeContext {
     modifier isTrustedForwarder() {
         require(
             _isTrustedForwarder(msg.sender),
-            "RelayerFeeContextERC2771.isTrustedForwarder"
+            "RelayerContext.isTrustedForwarder"
         );
         _;
     }
@@ -51,7 +51,7 @@ abstract contract RelayerFeeContext {
         uint256 fee = _getFeeUnchecked();
         require(
             fee <= _maxFee,
-            "RelayerFeeContextERC2771._transferFromThisToRelayerCapped: maxFee"
+            "RelayerContext._transferFromThisToRelayerCapped: maxFee"
         );
         _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
     }
@@ -120,14 +120,5 @@ abstract contract RelayerFeeContext {
 
     function _getFeeUnchecked() internal pure returns (uint256) {
         return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
-    }
-
-    function _encodeRelayerFeeContext(
-        bytes calldata _fnArgs,
-        address _feeCollector,
-        address _feeToken,
-        uint256 _fee
-    ) internal pure returns (bytes memory) {
-        return abi.encodePacked(_fnArgs, _feeCollector, _feeToken, _fee);
     }
 }

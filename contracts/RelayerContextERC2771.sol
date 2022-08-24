@@ -5,7 +5,7 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
 
 // solhint-disable max-line-length
 /**
- * @dev Context variant with RelayerFeeContextERC2771 and ERC2771Context support.
+ * @dev Context variant with RelayerContextERC2771 and ERC2771Context support.
  * Inherit plain RelayerFeeContext instead, if you do not need ERC2771 support.
  * Expects calldata encoding:
  *   abi.encodePacked(bytes fnArgs, address feeCollector, address feeToken, uint256 fee, address sender)
@@ -17,7 +17,7 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
  *     sender: -20
  */
 // solhint-enable max-line-length
-abstract contract RelayerFeeContextERC2771 {
+abstract contract RelayerContextERC2771 {
     using TokenUtils for address;
 
     /// @dev Only use with a safe whitelisted trusted forwarder contract (e.g. GelatoRelay)
@@ -34,7 +34,7 @@ abstract contract RelayerFeeContextERC2771 {
     modifier isTrustedForwarder() {
         require(
             _isTrustedForwarder(msg.sender),
-            "RelayerFeeContextERC2771.isTrustedForwarder"
+            "RelayerContextERC2771.isTrustedForwarder"
         );
         _;
     }
@@ -57,7 +57,7 @@ abstract contract RelayerFeeContextERC2771 {
         uint256 fee = _getFeeUnchecked();
         require(
             fee <= _maxFee,
-            "RelayerFeeContextERC2771._transferFromThisToRelayerCapped: maxFee"
+            "RelayerContextERC2771._transferFromThisToRelayerCapped: maxFee"
         );
         _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
     }
@@ -80,7 +80,7 @@ abstract contract RelayerFeeContextERC2771 {
         uint256 fee = _getFeeUnchecked();
         require(
             fee <= _maxFee,
-            "RelayerFeeContextERC2771._transferFromSenderToRelayerCapped: maxFee"
+            "RelayerContextERC2771._transferFromSenderToRelayerCapped: maxFee"
         );
         _getFeeTokenUnchecked().transferFrom(
             _msgSenderUnchecked(),
@@ -162,16 +162,5 @@ abstract contract RelayerFeeContextERC2771 {
     function _msgSenderUnchecked() internal pure returns (address) {
         return
             abi.decode(msg.data[msg.data.length - _SENDER_START:], (address));
-    }
-
-    function _encodeRelayerFeeERC2771Context(
-        bytes calldata _fnArgs,
-        address _feeCollector,
-        address _feeToken,
-        uint256 _fee,
-        address _sender
-    ) internal pure returns (bytes memory) {
-        return
-            abi.encodePacked(_fnArgs, _feeCollector, _feeToken, _fee, _sender);
     }
 }
