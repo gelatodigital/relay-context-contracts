@@ -3,12 +3,12 @@ pragma solidity ^0.8.1;
 
 // import {RelayerFeeContext} from "@gelatonetwork/relayer-context/contracts";
 
-/*is RelayerFeeContext*/
-contract MockRelayerFeeContext {
-    event LogRelayerContextValues(
-        address feeCollector,
-        address feeToken,
-        uint256 fee,
-        address sender
-    );
-}
+// /*is RelayerFeeContext*/
+// contract MockRelayerFeeContext {
+//     event LogRelayerContextValues(
+//         address feeCollector,
+//         address feeToken,
+//         uint256 fee,
+//         address sender
+//     );
+// }

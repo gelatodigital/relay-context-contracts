@@ -4,9 +4,9 @@
   "description": "Contains solidity helpers for implementing the Relayer Fee Context",
   "files": [
     "contracts/*.sol",
-    "contracts/constants",
-    "contracts/functions",
-    "contracts/lib"
+    "contracts/constants/*.sol",
+    "contracts/functions/*.sol",
+    "contracts/lib/*.sol"
   ],
   "scripts": {
     "build": "yarn compile && npx tsc",
@@ -32,7 +32,6 @@
     "@openzeppelin/contracts": "4.7.3"
   },
   "devDependencies": {
-    "@gelatonetwork/relayer-context": "^0.1.1-0",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-waffle": "2.0.3",
     "@tsconfig/recommended": "1.0.1",
