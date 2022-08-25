@@ -1,21 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import {
-    RelayerContext
-} from "@gelatonetwork/relayer-context/contracts/RelayerContext.sol";
+// import {
+//     RelayerContext
+// } from "@gelatonetwork/relayer-context/contracts/RelayerContext.sol";
+import {RelayerContext} from "../RelayerContext.sol";
 import "hardhat/console.sol";
 
 contract MockRelayerContext is RelayerContext {
     event LogMsgData(bytes msgData);
-    event LogValues(
-        bytes fnArgs,
-        address feeCollector,
-        address feeToken,
-        uint256 fee
-    );
-    event LogUncheckedValues(
-        bytes fnArgs,
+    event LogFnArgs(bytes fnArgs);
+    event LogContext(address feeCollector, address feeToken, uint256 fee);
+    event LogUncheckedContext(
         address feeCollector,
         address feeToken,
         uint256 fee
@@ -24,40 +20,26 @@ contract MockRelayerContext is RelayerContext {
     // solhint-disable-next-line no-empty-blocks
     constructor(address _mockRelayer) RelayerContext(_mockRelayer) {}
 
-    function onlyRelayerTransferUncapped() external onlyRelayer {
-        // _uncheckedTransferToFeeCollectorUncapped();
-
-        console.log("enter onlyRelayerTransferUncapped");
-
+    function emitContext() external {
         emit LogMsgData(msg.data);
+        emit LogFnArgs(_msgData());
+        emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
+        emit LogUncheckedContext(
+            _getFeeCollectorUnchecked(),
+            _getFeeTokenUnchecked(),
+            _getFeeUnchecked()
+        );
+    }
 
-        // emit LogValues(
-        //     _msgData(),
-        //     _getFeeCollector(),
-        //     _getFeeToken(),
-        //     _getFee()
-        // );
-
-        // emit LogUncheckedValues(
-        //     _msgData(),
-        //     _getFeeCollectorUnchecked(),
-        //     _getFeeTokenUnchecked(),
-        //     _getFeeUnchecked()
-        // );
+    function onlyRelayerTransferUncapped() external onlyRelayer {
+        _uncheckedTransferToFeeCollectorUncapped();
     }
 
     function onlyRelayerTransferCapped(uint256 _maxFee) external onlyRelayer {
         _uncheckedTransferToFeeCollectorCapped(_maxFee);
 
-        emit LogValues(
-            _msgData(),
-            _getFeeCollector(),
-            _getFeeToken(),
-            _getFee()
-        );
-
-        emit LogUncheckedValues(
-            _msgData(),
+        emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
+        emit LogUncheckedContext(
             _getFeeCollectorUnchecked(),
             _getFeeTokenUnchecked(),
             _getFeeUnchecked()

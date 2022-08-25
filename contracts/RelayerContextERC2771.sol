@@ -8,13 +8,19 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
  * @dev Context variant with RelayerContextERC2771 and ERC2771Context support.
  * Inherit plain RelayerContext instead, if you do not need ERC2771 support.
  * Expects calldata encoding:
- *   abi.encodePacked(bytes fnArgs, address feeCollector, address feeToken, uint256 fee, address sender)
- * Therefore, we're expecting 4 * 32bytes (20hex) (80 hex total) to be appended to fnArgs
- * 32bytes (20 hex) start offsets from calldatasize:
- *     feeCollector: -80
- *     feeToken: -60
- *     fee: -40
- *     sender: -20
+ *   abi.encodePacked(
+ *     abi.encodePacked(
+ *        bytes fnArgs,
+ *        abi.encode(address feeCollector, address feeToken, uint256 fee)
+ *     ),
+ *     sender
+ *   )
+ * Therefore, we're expecting 3 * 32bytes and 20 bytes to be appended to fnArgs
+ * 32bytes start offsets from calldatasize:
+ *     feeCollector: - 3 * 32 + 20
+ *     feeToken: - 2 * 32 + 20
+ *     fee: - 32 + 20
+ *     sender: - 20
  */
 // solhint-enable max-line-length
 abstract contract RelayerContextERC2771 {
@@ -24,9 +30,9 @@ abstract contract RelayerContextERC2771 {
     address public immutable relayer;
 
     // RelayerContext
-    uint256 private constant _FEE_COLLECTOR_START = 80;
-    uint256 private constant _FEE_TOKEN_START = 60;
-    uint256 private constant _FEE_START = 40;
+    uint256 private constant _FEE_COLLECTOR_START = 3 * 32 + 20;
+    uint256 private constant _FEE_TOKEN_START = 2 * 32 + 20;
+    uint256 private constant _FEE_START = 32 + 20;
 
     // ERC2771Context
     uint256 private constant _SENDER_START = 20;

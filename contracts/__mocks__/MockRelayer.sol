@@ -2,10 +2,14 @@
 pragma solidity ^0.8.1;
 
 import {GelatoBytes} from "../lib/GelatoBytes.sol";
+// import {
+//     _encodeRelayerContext,
+//     _encodeRelayerContextERC2771
+// } from "@gelatonetwork/relayer-context/contracts/functions/RelayerUtils.sol";
 import {
     _encodeRelayerContext,
     _encodeRelayerContextERC2771
-} from "@gelatonetwork/relayer-context/contracts/functions/RelayerUtils.sol";
+} from "../functions/RelayerUtils.sol";
 
 /// @dev Mock contracts for testing - UNSAFE CODE - do not copy
 contract MockRelayer {

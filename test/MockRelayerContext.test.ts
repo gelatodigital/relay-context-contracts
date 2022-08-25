@@ -38,14 +38,15 @@ describe("Test MockRelayer Smart Contract", function () {
     expect(await mockRelayerContext.relayer()).to.be.eq(mockRelayer.address);
   });
 
-  it("#1: onlyRelayerTransferUncapped with MockERC20", async () => {
-    const data = mockRelayerContext.interface.encodeFunctionData(
-      "onlyRelayerTransferUncapped"
+  it("#1: emitContext", async () => {
+    const data = mockRelayerContext.interface.encodeFunctionData("emitContext");
+    const encodedContextData = new ethers.utils.AbiCoder().encode(
+      ["address", "address", "uint256"],
+      [FEE_COLLECTOR, feeToken, FEE]
     );
-
     const encodedData = ethers.utils.solidityPack(
-      ["bytes", "address", "address", "uint256"],
-      [data, FEE_COLLECTOR, feeToken, FEE]
+      ["bytes", "bytes"],
+      [data, encodedContextData]
     );
 
     await mockERC20.transfer(target, FEE);
@@ -54,11 +55,12 @@ describe("Test MockRelayer Smart Contract", function () {
       mockRelayer.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE)
     )
       .to.emit(mockRelayerContext, "LogMsgData")
-      .withArgs(encodedData);
-
-    // .to.emit(mockRelayerContext, "LogValues")
-    // .withArgs(data, FEE_COLLECTOR, feeToken, FEE)
-    // .and.to.emit(mockRelayerContext, "LogUncheckedValues")
-    // .withArgs(data, FEE_COLLECTOR, feeToken, FEE);
+      .withArgs(encodedData)
+      .and.to.emit(mockRelayerContext, "LogFnArgs")
+      .withArgs(data)
+      .and.to.emit(mockRelayerContext, "LogContext")
+      .withArgs(FEE_COLLECTOR, feeToken, FEE)
+      .and.to.emit(mockRelayerContext, "LogUncheckedContext")
+      .withArgs(FEE_COLLECTOR, feeToken, FEE);
   });
 });
