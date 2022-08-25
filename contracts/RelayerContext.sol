@@ -2,6 +2,7 @@
 pragma solidity ^0.8.1;
 
 import {TokenUtils} from "./lib/TokenUtils.sol";
+import "hardhat/console.sol";
 
 /**
  * @dev Context variant with RelayerFee support.
@@ -62,6 +63,7 @@ abstract contract RelayerContext {
     }
 
     function _msgData() internal view returns (bytes calldata) {
+        console.log("_msgData");
         return
             _isRelayer(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
@@ -69,6 +71,7 @@ abstract contract RelayerContext {
     }
 
     function _getFeeCollector() internal view onlyRelayer returns (address) {
+        console.log("_getFeeCollector");
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_COLLECTOR_START:],
@@ -77,6 +80,7 @@ abstract contract RelayerContext {
     }
 
     function _getFeeToken() internal view onlyRelayer returns (address) {
+        console.log("_getFeeToken");
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_TOKEN_START:],
@@ -85,6 +89,7 @@ abstract contract RelayerContext {
     }
 
     function _getFee() internal view onlyRelayer returns (uint256) {
+        console.log("_getFee");
         return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
     }
 

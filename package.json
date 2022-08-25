@@ -6,7 +6,7 @@
     "contracts/*.sol",
     "contracts/constants/*.sol",
     "contracts/functions/*.sol",
-    "contracts/lib/*.sol"
+    "contracts/lib/RelayerUtils.sol"
   ],
   "scripts": {
     "build": "yarn install && yarn compile && npx tsc",
@@ -32,7 +32,7 @@
     "@openzeppelin/contracts": "4.7.3"
   },
   "devDependencies": {
-    "@gelatonetwork/relayer-context": "0.1.4",
+    "@gelatonetwork/relayer-context": "0.1.5",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-waffle": "2.0.3",
     "@tsconfig/recommended": "1.0.1",

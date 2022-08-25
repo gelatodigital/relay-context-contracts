@@ -4,8 +4,10 @@ pragma solidity ^0.8.1;
 import {
     RelayerContext
 } from "@gelatonetwork/relayer-context/contracts/RelayerContext.sol";
+import "hardhat/console.sol";
 
 contract MockRelayerContext is RelayerContext {
+    event LogMsgData(bytes msgData);
     event LogValues(
         bytes fnArgs,
         address feeCollector,
@@ -20,28 +22,32 @@ contract MockRelayerContext is RelayerContext {
     );
 
     // solhint-disable-next-line no-empty-blocks
-    constructor(address _mockRelay) RelayerContext(_mockRelay) {}
+    constructor(address _mockRelayer) RelayerContext(_mockRelayer) {}
 
     function onlyRelayerTransferUncapped() external onlyRelayer {
         // _uncheckedTransferToFeeCollectorUncapped();
 
-        emit LogValues(
-            _msgData(),
-            _getFeeCollector(),
-            _getFeeToken(),
-            _getFee()
-        );
+        console.log("enter onlyRelayerTransferUncapped");
 
-        emit LogUncheckedValues(
-            _msgData(),
-            _getFeeCollectorUnchecked(),
-            _getFeeTokenUnchecked(),
-            _getFeeUnchecked()
-        );
+        emit LogMsgData(msg.data);
+
+        // emit LogValues(
+        //     _msgData(),
+        //     _getFeeCollector(),
+        //     _getFeeToken(),
+        //     _getFee()
+        // );
+
+        // emit LogUncheckedValues(
+        //     _msgData(),
+        //     _getFeeCollectorUnchecked(),
+        //     _getFeeTokenUnchecked(),
+        //     _getFeeUnchecked()
+        // );
     }
 
     function onlyRelayerTransferCapped(uint256 _maxFee) external onlyRelayer {
-        // _uncheckedTransferToFeeCollectorCapped(_maxFee);
+        _uncheckedTransferToFeeCollectorCapped(_maxFee);
 
         emit LogValues(
             _msgData(),

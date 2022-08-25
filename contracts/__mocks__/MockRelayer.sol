@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
+import {GelatoBytes} from "../lib/GelatoBytes.sol";
 import {
     _encodeRelayerContext,
     _encodeRelayerContextERC2771
@@ -8,6 +9,8 @@ import {
 
 /// @dev Mock contracts for testing - UNSAFE CODE - do not copy
 contract MockRelayer {
+    using GelatoBytes for bytes;
+
     function forwardCall(
         address _target,
         bytes calldata _data,
@@ -15,10 +18,10 @@ contract MockRelayer {
         address _feeToken,
         uint256 _fee
     ) external {
-        (bool success, ) = _target.call(
+        (bool success, bytes memory returndata) = _target.call(
             _encodeRelayerContext(_data, _feeCollector, _feeToken, _fee)
         );
-        require(success, "MockRelayer.forwardCall: reverted");
+        if (!success) returndata.revertWithError("MockRelayer.forwardCall:");
     }
 
     function forwardCallERC2771(
@@ -29,7 +32,7 @@ contract MockRelayer {
         uint256 _fee,
         address _user
     ) external {
-        (bool success, ) = _target.call(
+        (bool success, bytes memory returndata) = _target.call(
             _encodeRelayerContextERC2771(
                 _data,
                 _feeCollector,
@@ -38,6 +41,7 @@ contract MockRelayer {
                 _user
             )
         );
-        require(success, "MockRelayer.forwardCallERC2771: reverted");
+        if (!success)
+            returndata.revertWithError("MockRelayer.forwardCallERC2771:");
     }
 }
