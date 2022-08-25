@@ -1,3 +1,3 @@
 import { ethers } from "ethers";
 
-export const INIT_TOKEN_BALANCE = ethers.utils.parseUnits("1000", 18);
+export const INIT_TOKEN_BALANCE = ethers.utils.parseUnits("100", 18);

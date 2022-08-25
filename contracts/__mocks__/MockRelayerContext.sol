@@ -5,7 +5,6 @@ pragma solidity ^0.8.1;
 //     RelayerContext
 // } from "@gelatonetwork/relayer-context/contracts/RelayerContext.sol";
 import {RelayerContext} from "../RelayerContext.sol";
-import "hardhat/console.sol";
 
 contract MockRelayerContext is RelayerContext {
     event LogMsgData(bytes msgData);
@@ -37,12 +36,5 @@ contract MockRelayerContext is RelayerContext {
 
     function onlyRelayerTransferCapped(uint256 _maxFee) external onlyRelayer {
         _uncheckedTransferToFeeCollectorCapped(_maxFee);
-
-        emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
-        emit LogUncheckedContext(
-            _getFeeCollectorUnchecked(),
-            _getFeeTokenUnchecked(),
-            _getFeeUnchecked()
-        );
     }
 }
