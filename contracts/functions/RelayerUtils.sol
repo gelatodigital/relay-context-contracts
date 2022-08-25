@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-function _encodeRelayerFeeContext(
+function _encodeRelayerContext(
     bytes calldata _fnArgs,
     address _feeCollector,
     address _feeToken,
@@ -10,7 +10,7 @@ function _encodeRelayerFeeContext(
     return abi.encodePacked(_fnArgs, _feeCollector, _feeToken, _fee);
 }
 
-function _encodeRelayerFeeERC2771Context(
+function _encodeRelayerContextERC2771(
     bytes calldata _fnArgs,
     address _feeCollector,
     address _feeToken,
