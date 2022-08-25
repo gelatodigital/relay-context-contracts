@@ -5,7 +5,7 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
 
 /**
  * @dev Context variant with RelayerFee support.
- * Use RelayerFeeERC2771Context, if you need ERC2771 support.
+ * Use RelayerFeeERC2771Context, if you need ERC2771 _msgSender support.
  * Expects calldata encoding:
  *   abi.encodePacked(bytes fnArgs, address feeCollectorAddress, address feeToken, uint256 fee)
  * Therefore, we're expecting 3 * 32bytes (20hex) (60 hex total) to be appended to normal msgData
@@ -18,26 +18,31 @@ abstract contract RelayerContext {
     using TokenUtils for address;
 
     /// @dev Only use with a safe whitelisted trusted forwarder contract (e.g. GelatoRelay)
-    address public immutable trustedForwarder;
+    address public immutable relayer;
 
-    // RelayerFeeContext
+    // RelayerContext
     uint256 internal constant _FEE_COLLECTOR_START = 60;
     uint256 internal constant _FEE_TOKEN_START = 40;
     uint256 internal constant _FEE_START = 20;
 
-    modifier isTrustedForwarder() {
-        require(
-            _isTrustedForwarder(msg.sender),
-            "RelayerContext.isTrustedForwarder"
-        );
+    modifier onlyRelayer() {
+        require(_isRelayer(msg.sender), "RelayerContext.onlyRelayer");
         _;
     }
 
-    constructor(address _trustedForwarder) {
-        trustedForwarder = _trustedForwarder;
+    constructor(address _relayer) {
+        relayer = _relayer;
     }
 
-    function _transferFromThisToRelayerUncapped() internal isTrustedForwarder {
+    function _transferFromThisToRelayerUncapped() internal onlyRelayer {
+        _getFeeTokenUnchecked().transfer(
+            _getFeeCollectorUnchecked(),
+            _getFeeUnchecked()
+        );
+    }
+
+    // DANGER! Only use if you check `_isRelayer` before transferring
+    function _uncheckedTransferFromThisToRelayerUncapped() internal {
         _getFeeTokenUnchecked().transfer(
             _getFeeCollectorUnchecked(),
             _getFeeUnchecked()
@@ -46,7 +51,7 @@ abstract contract RelayerContext {
 
     function _transferFromThisToRelayerCapped(uint256 _maxFee)
         internal
-        isTrustedForwarder
+        onlyRelayer
     {
         uint256 fee = _getFeeUnchecked();
         require(
@@ -56,33 +61,35 @@ abstract contract RelayerContext {
         _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
     }
 
-    function _isTrustedForwarder(address _forwarder)
+    // DANGER! Only use if you check `_isRelayer` before transferring
+    function _uncheckedTransferFromThisToRelayerCapped(uint256 _maxFee)
+        internal
+    {
+        uint256 fee = _getFeeUnchecked();
+        require(
+            fee <= _maxFee,
+            "RelayerContext._uncheckedTransferFromThisToRelayerCapped: maxFee"
+        );
+        _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
+    }
+
+    function _isRelayer(address _forwarder)
         internal
         view
         virtual
         returns (bool)
     {
-        return _forwarder == trustedForwarder;
-    }
-
-    /// Use RelayerFeeERC2771Context if you expect the ERC2771 behavior.
-    function _msgSender() internal view virtual returns (address) {
-        return msg.sender;
+        return _forwarder == relayer;
     }
 
     function _msgData() internal view returns (bytes calldata) {
         return
-            _isTrustedForwarder(msg.sender)
+            _isRelayer(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
                 : msg.data;
     }
 
-    function _getFeeCollector()
-        internal
-        view
-        isTrustedForwarder
-        returns (address)
-    {
+    function _getFeeCollector() internal view onlyRelayer returns (address) {
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_COLLECTOR_START:],
@@ -90,7 +97,7 @@ abstract contract RelayerContext {
             );
     }
 
-    function _getFeeToken() internal view isTrustedForwarder returns (address) {
+    function _getFeeToken() internal view onlyRelayer returns (address) {
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_TOKEN_START:],
@@ -98,7 +105,7 @@ abstract contract RelayerContext {
             );
     }
 
-    function _getFee() internal view isTrustedForwarder returns (uint256) {
+    function _getFee() internal view onlyRelayer returns (uint256) {
         return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
     }
 

@@ -1,9 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-// import {RelayerFeeContext} from "@gelatonetwork/relayer-context/contracts";
+import {
+    RelayerContext
+} from "@gelatonetwork/relayer-context/contracts/RelayerContext.sol";
 
-// /*is RelayerFeeContext*/
-// contract MockRelayerFeeContext {
-//     event LogValues(address feeCollector, address feeToken, uint256 fee);
-// }
+contract MockRelayerContext is RelayerContext {
+    event LogValues(
+        bytes fnArgs,
+        address feeCollector,
+        address feeToken,
+        uint256 fee
+    );
+    event LogUncheckedValues(
+        address feeCollector,
+        address feeToken,
+        uint256 fee
+    );
+
+    constructor(address _mockRelay) RelayerContext(_mockRelay) {}
+
+    function testUncapped() external {
+        _transferFromThisToRelayerUncapped();
+    }
+}
