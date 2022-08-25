@@ -34,41 +34,20 @@ abstract contract RelayerContext {
         relayer = _relayer;
     }
 
-    function _transferFromThisToRelayerUncapped() internal onlyRelayer {
+    // DANGER! Only use with onlyRelayer `_isRelayer` before transferring
+    function _uncheckedTransferToFeeCollectorUncapped() internal {
         _getFeeTokenUnchecked().transfer(
             _getFeeCollectorUnchecked(),
             _getFeeUnchecked()
         );
     }
 
-    // DANGER! Only use if you check `_isRelayer` before transferring
-    function _uncheckedTransferFromThisToRelayerUncapped() internal {
-        _getFeeTokenUnchecked().transfer(
-            _getFeeCollectorUnchecked(),
-            _getFeeUnchecked()
-        );
-    }
-
-    function _transferFromThisToRelayerCapped(uint256 _maxFee)
-        internal
-        onlyRelayer
-    {
+    // DANGER! Only use with onlyRelayer `_isRelayer` before transferring
+    function _uncheckedTransferToFeeCollectorCapped(uint256 _maxFee) internal {
         uint256 fee = _getFeeUnchecked();
         require(
             fee <= _maxFee,
-            "RelayerContext._transferFromThisToRelayerCapped: maxFee"
-        );
-        _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
-    }
-
-    // DANGER! Only use if you check `_isRelayer` before transferring
-    function _uncheckedTransferFromThisToRelayerCapped(uint256 _maxFee)
-        internal
-    {
-        uint256 fee = _getFeeUnchecked();
-        require(
-            fee <= _maxFee,
-            "RelayerContext._uncheckedTransferFromThisToRelayerCapped: maxFee"
+            "RelayerContext._uncheckedTransferToFeeCollectorCapped: maxFee"
         );
         _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
     }

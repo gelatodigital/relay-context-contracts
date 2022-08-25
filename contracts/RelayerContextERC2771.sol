@@ -40,47 +40,29 @@ abstract contract RelayerContextERC2771 {
         relayer = _relayer;
     }
 
-    function _transferFromThisToRelayerUncapped() internal onlyRelayer {
+    // DANGER! Only use with onlyRelayer or `_isRelayer` before transferring
+    function _uncheckedTransferToFeeCollectorUncapped() internal {
         _getFeeTokenUnchecked().transfer(
             _getFeeCollectorUnchecked(),
             _getFeeUnchecked()
         );
     }
 
-    // DANGER! Only use if you check `_isRelayer` before transferring
-    function _uncheckedTransferFromThisToRelayerUncapped() internal {
-        _getFeeTokenUnchecked().transfer(
-            _getFeeCollectorUnchecked(),
-            _getFeeUnchecked()
-        );
-    }
-
-    function _transferFromThisToRelayerCapped(uint256 _maxFee)
+    // DANGER! Only use with onlyRelayer or `_isRelayer` before transferring
+    function _uncheckedTransferToFeeCollectorCapped(uint256 _maxFee)
         internal
         onlyRelayer
     {
         uint256 fee = _getFeeUnchecked();
         require(
             fee <= _maxFee,
-            "RelayerContextERC2771._transferFromThisToRelayerCapped: maxFee"
+            "RelayerContextERC2771._uncheckedTransferToFeeCollectorCapped: maxFee"
         );
         _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
     }
 
-    // DANGER! Only use if you check `_isRelayer` before transferring
-    function _uncheckedTransferFromThisToRelayerCapped(uint256 _maxFee)
-        internal
-        onlyRelayer
-    {
-        uint256 fee = _getFeeUnchecked();
-        require(
-            fee <= _maxFee,
-            "RelayerContextERC2771._uncheckedTransferFromThisToRelayerCapped: maxFee"
-        );
-        _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
-    }
-
-    function _transferFromSenderToRelayerUncapped() internal onlyRelayer {
+    // DANGER! Only use with onlyRelayer or `_isRelayer` before transferring
+    function _uncheckedTransferFromSenderToFeeCollectorUncapped() internal {
         _getFeeTokenUnchecked().transferFrom(
             _msgSenderUnchecked(),
             _getFeeCollectorUnchecked(),
@@ -88,39 +70,14 @@ abstract contract RelayerContextERC2771 {
         );
     }
 
-    // DANGER! Only use if you check `_isRelayer` before transferring
-    function _uncheckedTransferFromSenderToRelayerUncapped() internal {
-        _getFeeTokenUnchecked().transferFrom(
-            _msgSenderUnchecked(),
-            _getFeeCollectorUnchecked(),
-            _getFeeUnchecked()
-        );
-    }
-
-    function _transferFromSenderToRelayerCapped(uint256 _maxFee)
-        internal
-        onlyRelayer
-    {
-        uint256 fee = _getFeeUnchecked();
-        require(
-            fee <= _maxFee,
-            "RelayerContextERC2771._transferFromSenderToRelayerCapped: maxFee"
-        );
-        _getFeeTokenUnchecked().transferFrom(
-            _msgSenderUnchecked(),
-            _getFeeCollectorUnchecked(),
-            fee
-        );
-    }
-
-    // DANGER! Only use if you check `_isRelayer` before transferring
-    function _unckeckedTransferFromSenderToRelayerCapped(uint256 _maxFee)
+    // DANGER! Only use with onlyRelayer or `_isRelayer` before transferring
+    function _unckeckedTransferFromSenderToFeeCollectorCapped(uint256 _maxFee)
         internal
     {
         uint256 fee = _getFeeUnchecked();
         require(
             fee <= _maxFee,
-            "RelayerContextERC2771._unckeckedTransferFromSenderToRelayerCapped: maxFee"
+            "RelayerContextERC2771._unckeckedTransferFromSenderToFeeCollectorCapped: maxFee"
         );
         _getFeeTokenUnchecked().transferFrom(
             _msgSenderUnchecked(),

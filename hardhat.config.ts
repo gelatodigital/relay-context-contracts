@@ -7,6 +7,12 @@ import "@typechain/hardhat";
 import "hardhat-deploy";
 
 const config: HardhatUserConfig = {
+  // hardhat-deploy
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+  },
   solidity: "0.8.1",
   typechain: {
     outDir: "typechain",
