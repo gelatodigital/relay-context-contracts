@@ -2,6 +2,7 @@
   "name": "@gelatonetwork/relay-context",
   "version": "0.0.1",
   "description": "Solidity and test helpers for implementing GelatoRelayContext",
+  "main": "dist/index.js",
   "files": [
     "contracts/GelatoRelayContext.sol",
     "contracts/constants",
