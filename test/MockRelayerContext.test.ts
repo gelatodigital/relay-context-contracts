@@ -1,17 +1,17 @@
 import hre = require("hardhat");
 import { expect } from "chai";
 //import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signers";
-import { MockRelayer, MockRelayerContext, MockERC20 } from "../typechain";
+import { MockRelayer, MockGelatoRelayerContext, MockERC20 } from "../typechain";
 import { INIT_TOKEN_BALANCE as FEE } from "./constants";
 import { ethers } from "hardhat";
 
 const FEE_COLLECTOR = "0x3CACa7b48D0573D793d3b0279b5F0029180E83b6";
 
-describe("Test MockRelayer Smart Contract", function () {
+describe("Test MockGelatoRelayContext Smart Contract", function () {
   // let user: SignerWithAddress;
 
   let mockRelayer: MockRelayer;
-  let mockRelayerContext: MockRelayerContext;
+  let mockRelayerContext: MockGelatoRelayerContext;
   let mockERC20: MockERC20;
 
   let target: string;
@@ -25,17 +25,14 @@ describe("Test MockRelayer Smart Contract", function () {
 
     await hre.deployments.fixture();
 
-    //  [user] = await hre.ethers.getSigners();
-
     mockRelayer = await hre.ethers.getContract("MockRelayer");
-    mockRelayerContext = await hre.ethers.getContract("MockRelayerContext");
+    mockRelayerContext = await hre.ethers.getContract(
+      "MockGelatoRelayerContext"
+    );
     mockERC20 = await hre.ethers.getContract("MockERC20");
 
     target = mockRelayerContext.address;
     feeToken = mockERC20.address;
-  });
-  it("#0: MockRelayerContext has MockRelayer set as relayer", async () => {
-    expect(await mockRelayerContext.relayer()).to.be.eq(mockRelayer.address);
   });
 
   it("#1: emitContext", async () => {
@@ -62,9 +59,9 @@ describe("Test MockRelayer Smart Contract", function () {
       .withArgs(FEE_COLLECTOR, feeToken, FEE);
   });
 
-  it("#2: onlyRelayerTransferUncapped", async () => {
+  it("#2: testTransferRelayFee", async () => {
     const data = mockRelayerContext.interface.encodeFunctionData(
-      "onlyRelayerTransferUncapped"
+      "testTransferRelayFee"
     );
 
     await mockERC20.transfer(target, FEE);
@@ -74,17 +71,11 @@ describe("Test MockRelayer Smart Contract", function () {
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
 
-  it("#3: onlyRelayerTransferUncapped reverts if not relayer", async () => {
-    await expect(
-      mockRelayerContext.onlyRelayerTransferUncapped()
-    ).to.be.revertedWith("RelayerContext.onlyRelayer");
-  });
-
-  it("#4: onlyRelayerTransferCapped: works if at maxFee", async () => {
+  it("#3: testTransferRelayFeeCapped: works if at maxFee", async () => {
     const maxFee = FEE;
 
     const data = mockRelayerContext.interface.encodeFunctionData(
-      "onlyRelayerTransferCapped",
+      "testTransferRelayFeeCapped",
       [maxFee]
     );
 
@@ -95,11 +86,11 @@ describe("Test MockRelayer Smart Contract", function () {
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
 
-  it("#5: onlyRelayerTransferCapped: works if below maxFee", async () => {
+  it("#4: testTransferRelayFeeCapped: works if below maxFee", async () => {
     const maxFee = FEE.add(1);
 
     const data = mockRelayerContext.interface.encodeFunctionData(
-      "onlyRelayerTransferCapped",
+      "testTransferRelayFeeCapped",
       [maxFee]
     );
 
@@ -110,11 +101,11 @@ describe("Test MockRelayer Smart Contract", function () {
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
 
-  it("#6: onlyRelayerTransferCapped: reverts if above maxFee", async () => {
+  it("#5: testTransferRelayFeeCapped: reverts if above maxFee", async () => {
     const maxFee = FEE.sub(1);
 
     const data = mockRelayerContext.interface.encodeFunctionData(
-      "onlyRelayerTransferCapped",
+      "testTransferRelayFeeCapped",
       [maxFee]
     );
 
@@ -123,13 +114,13 @@ describe("Test MockRelayer Smart Contract", function () {
     await expect(
       mockRelayer.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE)
     ).to.be.revertedWith(
-      "MockRelayer.forwardCall:RelayerContext._transferToFeeCollectorCapped: maxFee"
+      "MockRelayer.forwardCall:GelatoRelayerContext._transferRelayFeeCapped: maxFee"
     );
   });
 
-  it("#7: onlyRelayerTransferCapped reverts if not relayer", async () => {
-    await expect(
-      mockRelayerContext.onlyRelayerTransferCapped(0)
-    ).to.be.revertedWith("RelayerContext.onlyRelayer");
+  it("#6: testOnlyRelayer reverts if not relayer", async () => {
+    await expect(mockRelayerContext.testOnlyRelayer()).to.be.revertedWith(
+      "GelatoRelayerContext.onlyRelayer"
+    );
   });
 });

@@ -2,9 +2,10 @@
 pragma solidity ^0.8.1;
 
 import {TokenUtils} from "./lib/TokenUtils.sol";
+import {GELATO_RELAY} from "./constants/GelatoRelay.sol";
 
 /**
- * @dev Context variant with RelayerFee support.
+ * @dev Context variant with Gelato Relayer Fee support.
  * Expects calldata encoding:
  *   abi.encodePacked(bytes fnArgs, address feeCollectorAddress, address feeToken, uint256 fee)
  * Therefore, we're expecting 3 * 32bytes to be appended to normal msgData
@@ -13,37 +14,30 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
  *     feeToken: - 32 * 2
  *     fee: - 32
  */
-abstract contract RelayerContext {
+abstract contract GelatoRelayerContext {
     using TokenUtils for address;
 
-    /// @dev Only use with a safe whitelisted trusted forwarder contract (e.g. GelatoRelay)
-    address public immutable relayer;
-
-    // RelayerContext
+    // GelatoRelayerContext
     uint256 internal constant _FEE_COLLECTOR_START = 3 * 32;
     uint256 internal constant _FEE_TOKEN_START = 2 * 32;
     uint256 internal constant _FEE_START = 32;
 
     modifier onlyRelayer() {
-        require(_isRelayer(msg.sender), "RelayerContext.onlyRelayer");
+        require(_isRelayer(msg.sender), "GelatoRelayerContext.onlyRelayer");
         _;
     }
 
-    constructor(address _relayer) {
-        relayer = _relayer;
-    }
-
     // DANGER! Only use with onlyRelayer `_isRelayer` before transferring
-    function _transferToFeeCollectorUncapped() internal {
+    function _transferRelayFee() internal {
         _getFeeToken().transfer(_getFeeCollector(), _getFee());
     }
 
     // DANGER! Only use with onlyRelayer `_isRelayer` before transferring
-    function _transferToFeeCollectorCapped(uint256 _maxFee) internal {
+    function _transferRelayFeeCapped(uint256 _maxFee) internal {
         uint256 fee = _getFee();
         require(
             fee <= _maxFee,
-            "RelayerContext._transferToFeeCollectorCapped: maxFee"
+            "GelatoRelayerContext._transferRelayFeeCapped: maxFee"
         );
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
@@ -54,7 +48,7 @@ abstract contract RelayerContext {
         virtual
         returns (bool)
     {
-        return _forwarder == relayer;
+        return _forwarder == GELATO_RELAY;
     }
 
     function _msgData() internal view returns (bytes calldata) {
