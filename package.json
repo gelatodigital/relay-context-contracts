@@ -1,6 +1,6 @@
 {
   "name": "@gelatonetwork/relay-context",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Solidity and test helpers for implementing GelatoRelayContext",
   "files": [
     "contracts/GelatoRelayContext.sol",
