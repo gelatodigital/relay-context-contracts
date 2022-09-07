@@ -1,6 +1,6 @@
 {
   "name": "@gelatonetwork/relayer-context",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Contains solidity helpers for implementing the Relayer Fee Context",
   "files": [
     "contracts/GelatoRelayContext.sol",
