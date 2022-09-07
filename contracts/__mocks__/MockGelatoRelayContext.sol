@@ -2,11 +2,11 @@
 pragma solidity ^0.8.1;
 
 // import {
-//     GelatoRelayerContext
-// } from "@gelatonetwork/relayer-context/contracts/GelatoRelayerContext.sol";
-import {GelatoRelayerContext} from "../GelatoRelayerContext.sol";
+//     GelatoRelayContext
+// } from "@gelatonetwork/relayer-context/contracts/GelatoRelayContext.sol";
+import {GelatoRelayContext} from "../GelatoRelayContext.sol";
 
-contract MockGelatoRelayerContext is GelatoRelayerContext {
+contract MockGelatoRelayContext is GelatoRelayContext {
     event LogMsgData(bytes msgData);
     event LogFnArgs(bytes fnArgs);
     event LogContext(address feeCollector, address feeToken, uint256 fee);

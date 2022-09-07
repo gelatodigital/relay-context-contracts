@@ -1,17 +1,14 @@
 import hre = require("hardhat");
 import { expect } from "chai";
-//import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signers";
-import { MockRelayer, MockGelatoRelayerContext, MockERC20 } from "../typechain";
+import { MockRelayer, MockGelatoRelayContext, MockERC20 } from "../typechain";
 import { INIT_TOKEN_BALANCE as FEE } from "./constants";
 import { ethers } from "hardhat";
 
 const FEE_COLLECTOR = "0x3CACa7b48D0573D793d3b0279b5F0029180E83b6";
 
 describe("Test MockGelatoRelayContext Smart Contract", function () {
-  // let user: SignerWithAddress;
-
   let mockRelayer: MockRelayer;
-  let mockRelayerContext: MockGelatoRelayerContext;
+  let mockRelayerContext: MockGelatoRelayContext;
   let mockERC20: MockERC20;
 
   let target: string;
@@ -26,9 +23,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     await hre.deployments.fixture();
 
     mockRelayer = await hre.ethers.getContract("MockRelayer");
-    mockRelayerContext = await hre.ethers.getContract(
-      "MockGelatoRelayerContext"
-    );
+    mockRelayerContext = await hre.ethers.getContract("MockGelatoRelayContext");
     mockERC20 = await hre.ethers.getContract("MockERC20");
 
     target = mockRelayerContext.address;
@@ -114,13 +109,13 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     await expect(
       mockRelayer.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE)
     ).to.be.revertedWith(
-      "MockRelayer.forwardCall:GelatoRelayerContext._transferRelayFeeCapped: maxFee"
+      "MockRelayer.forwardCall:GelatoRelayContext._transferRelayFeeCapped: maxFee"
     );
   });
 
   it("#6: testOnlyRelayer reverts if not relayer", async () => {
     await expect(mockRelayerContext.testOnlyRelayer()).to.be.revertedWith(
-      "GelatoRelayerContext.onlyRelayer"
+      "GelatoRelayContext.onlyRelayer"
     );
   });
 });

@@ -14,16 +14,16 @@ import {GELATO_RELAY} from "./constants/GelatoRelay.sol";
  *     feeToken: - 32 * 2
  *     fee: - 32
  */
-abstract contract GelatoRelayerContext {
+abstract contract GelatoRelayContext {
     using TokenUtils for address;
 
-    // GelatoRelayerContext
+    // GelatoRelayContext
     uint256 internal constant _FEE_COLLECTOR_START = 3 * 32;
     uint256 internal constant _FEE_TOKEN_START = 2 * 32;
     uint256 internal constant _FEE_START = 32;
 
     modifier onlyRelayer() {
-        require(_isRelayer(msg.sender), "GelatoRelayerContext.onlyRelayer");
+        require(_isRelayer(msg.sender), "GelatoRelayContext.onlyRelayer");
         _;
     }
 
@@ -37,7 +37,7 @@ abstract contract GelatoRelayerContext {
         uint256 fee = _getFee();
         require(
             fee <= _maxFee,
-            "GelatoRelayerContext._transferRelayFeeCapped: maxFee"
+            "GelatoRelayContext._transferRelayFeeCapped: maxFee"
         );
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
