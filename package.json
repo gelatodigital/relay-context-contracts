@@ -3,10 +3,10 @@
   "version": "1.0.1",
   "description": "Contains solidity helpers for implementing the Relayer Fee Context",
   "files": [
-    "contracts/*.sol",
-    "contracts/constants/*.sol",
-    "contracts/functions/*.sol",
-    "contracts/lib/TokenUtils.sol"
+    "contracts/GelatoRelayerContext.sol",
+    "contracts/constants",
+    "contracts/functions",
+    "contracts/lib"
   ],
   "scripts": {
     "build": "yarn install && yarn compile && npx tsc",
