@@ -5,7 +5,6 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
 
 /**
  * @dev Context variant with RelayerFee support.
- * Use RelayerFeeERC2771Context, if you need ERC2771 _msgSender support.
  * Expects calldata encoding:
  *   abi.encodePacked(bytes fnArgs, address feeCollectorAddress, address feeToken, uint256 fee)
  * Therefore, we're expecting 3 * 32bytes to be appended to normal msgData
@@ -35,21 +34,18 @@ abstract contract RelayerContext {
     }
 
     // DANGER! Only use with onlyRelayer `_isRelayer` before transferring
-    function _uncheckedTransferToFeeCollectorUncapped() internal {
-        _getFeeTokenUnchecked().transfer(
-            _getFeeCollectorUnchecked(),
-            _getFeeUnchecked()
-        );
+    function _transferToFeeCollectorUncapped() internal {
+        _getFeeToken().transfer(_getFeeCollector(), _getFee());
     }
 
     // DANGER! Only use with onlyRelayer `_isRelayer` before transferring
-    function _uncheckedTransferToFeeCollectorCapped(uint256 _maxFee) internal {
-        uint256 fee = _getFeeUnchecked();
+    function _transferToFeeCollectorCapped(uint256 _maxFee) internal {
+        uint256 fee = _getFee();
         require(
             fee <= _maxFee,
-            "RelayerContext._uncheckedTransferToFeeCollectorCapped: maxFee"
+            "RelayerContext._transferToFeeCollectorCapped: maxFee"
         );
-        _getFeeTokenUnchecked().transfer(_getFeeCollectorUnchecked(), fee);
+        _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
     function _isRelayer(address _forwarder)
@@ -68,7 +64,8 @@ abstract contract RelayerContext {
                 : msg.data;
     }
 
-    function _getFeeCollector() internal view onlyRelayer returns (address) {
+    // Only use with previous onlyRelayer or `_isRelayer` checks
+    function _getFeeCollector() internal pure returns (address) {
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_COLLECTOR_START:],
@@ -76,7 +73,8 @@ abstract contract RelayerContext {
             );
     }
 
-    function _getFeeToken() internal view onlyRelayer returns (address) {
+    // Only use with previous onlyRelayer or `_isRelayer` checks
+    function _getFeeToken() internal pure returns (address) {
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_TOKEN_START:],
@@ -84,27 +82,8 @@ abstract contract RelayerContext {
             );
     }
 
-    function _getFee() internal view onlyRelayer returns (uint256) {
-        return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
-    }
-
-    function _getFeeCollectorUnchecked() internal pure returns (address) {
-        return
-            abi.decode(
-                msg.data[msg.data.length - _FEE_COLLECTOR_START:],
-                (address)
-            );
-    }
-
-    function _getFeeTokenUnchecked() internal pure returns (address) {
-        return
-            abi.decode(
-                msg.data[msg.data.length - _FEE_TOKEN_START:],
-                (address)
-            );
-    }
-
-    function _getFeeUnchecked() internal pure returns (uint256) {
+    // Only use with previous onlyRelayer or `_isRelayer` checks
+    function _getFee() internal pure returns (uint256) {
         return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
     }
 }
