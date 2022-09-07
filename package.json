@@ -4,6 +4,7 @@
   "description": "Solidity and test helpers for implementing GelatoRelayContext",
   "main": "dist/index.js",
   "files": [
+    "dist/index.js",
     "contracts/GelatoRelayContext.sol",
     "contracts/constants",
     "contracts/functions",
