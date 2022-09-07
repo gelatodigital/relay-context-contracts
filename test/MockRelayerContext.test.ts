@@ -59,8 +59,6 @@ describe("Test MockRelayer Smart Contract", function () {
       .and.to.emit(mockRelayerContext, "LogFnArgs")
       .withArgs(data)
       .and.to.emit(mockRelayerContext, "LogContext")
-      .withArgs(FEE_COLLECTOR, feeToken, FEE)
-      .and.to.emit(mockRelayerContext, "LogUncheckedContext")
       .withArgs(FEE_COLLECTOR, feeToken, FEE);
   });
 
@@ -125,7 +123,7 @@ describe("Test MockRelayer Smart Contract", function () {
     await expect(
       mockRelayer.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE)
     ).to.be.revertedWith(
-      "MockRelayer.forwardCall:RelayerContext._uncheckedTransferToFeeCollectorCapped: maxFee"
+      "MockRelayer.forwardCall:RelayerContext._transferToFeeCollectorCapped: maxFee"
     );
   });
 

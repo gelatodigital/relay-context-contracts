@@ -10,17 +10,3 @@ function _encodeRelayerContext(
     return
         abi.encodePacked(_fnArgs, abi.encode(_feeCollector, _feeToken, _fee));
 }
-
-function _encodeRelayerContextERC2771(
-    bytes calldata _fnArgs,
-    address _feeCollector,
-    address _feeToken,
-    uint256 _fee,
-    address _sender
-) pure returns (bytes memory) {
-    return
-        abi.encodePacked(
-            _fnArgs,
-            abi.encode(_feeCollector, _feeToken, _fee, _sender)
-        );
-}

@@ -10,11 +10,6 @@ contract MockRelayerContext is RelayerContext {
     event LogMsgData(bytes msgData);
     event LogFnArgs(bytes fnArgs);
     event LogContext(address feeCollector, address feeToken, uint256 fee);
-    event LogUncheckedContext(
-        address feeCollector,
-        address feeToken,
-        uint256 fee
-    );
 
     // solhint-disable-next-line no-empty-blocks
     constructor(address _mockRelayer) RelayerContext(_mockRelayer) {}
@@ -23,18 +18,13 @@ contract MockRelayerContext is RelayerContext {
         emit LogMsgData(msg.data);
         emit LogFnArgs(_msgData());
         emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
-        emit LogUncheckedContext(
-            _getFeeCollectorUnchecked(),
-            _getFeeTokenUnchecked(),
-            _getFeeUnchecked()
-        );
     }
 
     function onlyRelayerTransferUncapped() external onlyRelayer {
-        _uncheckedTransferToFeeCollectorUncapped();
+        _transferToFeeCollectorUncapped();
     }
 
     function onlyRelayerTransferCapped(uint256 _maxFee) external onlyRelayer {
-        _uncheckedTransferToFeeCollectorCapped(_maxFee);
+        _transferToFeeCollectorCapped(_maxFee);
     }
 }
