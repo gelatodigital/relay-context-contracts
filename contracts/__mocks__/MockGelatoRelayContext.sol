@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-// import {
-//     GelatoRelayContext
-// } from "@gelatonetwork/relayer-context/contracts/GelatoRelayContext.sol";
 import {GelatoRelayContext} from "../GelatoRelayContext.sol";
 
 contract MockGelatoRelayContext is GelatoRelayContext {
@@ -26,5 +23,5 @@ contract MockGelatoRelayContext is GelatoRelayContext {
     }
 
     // solhint-disable-next-line no-empty-blocks
-    function testOnlyRelayer() external onlyRelayer {}
+    function testOnlyGelatoRelay() external onlyGelatoRelay {}
 }

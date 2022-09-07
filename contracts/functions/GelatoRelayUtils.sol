@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-function _encodeRelayerContext(
+function _encodeGelatoRelayContext(
     bytes calldata _fnArgs,
     address _feeCollector,
     address _feeToken,

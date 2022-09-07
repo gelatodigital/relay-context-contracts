@@ -2,13 +2,10 @@
 pragma solidity ^0.8.1;
 
 import {GelatoBytes} from "../lib/GelatoBytes.sol";
-// import {
-//     _encodeRelayerContext
-// } from "@gelatonetwork/relayer-context/contracts/functions/RelayerUtils.sol";
-import {_encodeRelayerContext} from "../functions/RelayerUtils.sol";
+import {_encodeGelatoRelayContext} from "../functions/GelatoRelayUtils.sol";
 
 /// @dev Mock contracts for testing - UNSAFE CODE - do not copy
-contract MockRelayer {
+contract MockRelay {
     using GelatoBytes for bytes;
 
     function forwardCall(
@@ -19,8 +16,8 @@ contract MockRelayer {
         uint256 _fee
     ) external {
         (bool success, bytes memory returndata) = _target.call(
-            _encodeRelayerContext(_data, _feeCollector, _feeToken, _fee)
+            _encodeGelatoRelayContext(_data, _feeCollector, _feeToken, _fee)
         );
-        if (!success) returndata.revertWithError("MockRelayer.forwardCall:");
+        if (!success) returndata.revertWithError("MockRelay.forwardCall:");
     }
 }
