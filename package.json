@@ -6,10 +6,12 @@
   "types": "dist/src/index.d.ts",
   "files": [
     "dist/src/index.d.ts",
-    "contracts/GelatoRelayContext.sol",
+    "contracts/base",
     "contracts/constants",
     "contracts/functions",
-    "contracts/lib"
+    "contracts/lib",
+    "contracts/GelatoRelayContext.sol",
+    "contracts/GelatoRelayFeeCollector.sol"
   ],
   "scripts": {
     "build": "yarn install && yarn compile && npx tsc",
