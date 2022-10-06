@@ -4,7 +4,7 @@ import { MockRelay, MockGelatoRelayContext, MockERC20 } from "../typechain";
 import { INIT_TOKEN_BALANCE as FEE } from "./constants";
 import { ethers } from "hardhat";
 
-const FEE_COLLECTOR = "0x3CACa7b48D0573D793d3b0279b5F0029180E83b6";
+const FEE_COLLECTOR = "0x3AC05161b76a35c1c28dC99Aa01BEd7B24cEA3bf";
 
 describe("Test MockGelatoRelayContext Smart Contract", function () {
   let mockRelay: MockRelay;
@@ -33,7 +33,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
   it("#1: emitContext", async () => {
     const data = mockRelayContext.interface.encodeFunctionData("emitContext");
 
-    // Mimic GelatoRelayUtils _encodeGelatoRelayContext used on-chain by MockRelay
+    // Mimicking diamond encoding
     const encodedContextData = new ethers.utils.AbiCoder().encode(
       ["address", "address", "uint256"],
       [FEE_COLLECTOR, feeToken, FEE]
@@ -43,12 +43,10 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
       [data, encodedContextData]
     );
 
-    await expect(
-      mockRelay.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE)
-    )
-      .to.emit(mockRelayContext, "LogMsgData")
+    await expect(mockRelay.forwardCall(target, encodedData))
+      .to.emit(mockRelayContext, "LogEntireMsgData")
       .withArgs(encodedData)
-      .and.to.emit(mockRelayContext, "LogFnArgs")
+      .and.to.emit(mockRelayContext, "LogMsgData")
       .withArgs(data)
       .and.to.emit(mockRelayContext, "LogContext")
       .withArgs(FEE_COLLECTOR, feeToken, FEE);
@@ -61,7 +59,18 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
 
     await mockERC20.transfer(target, FEE);
 
-    await mockRelay.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE);
+    // Mimicking diamond encoding
+    const encodedContextData = new ethers.utils.AbiCoder().encode(
+      ["address", "address", "uint256"],
+      [FEE_COLLECTOR, feeToken, FEE]
+    );
+
+    const encodedData = ethers.utils.solidityPack(
+      ["bytes", "bytes"],
+      [data, encodedContextData]
+    );
+
+    await mockRelay.forwardCall(target, encodedData);
 
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
@@ -76,7 +85,18 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
 
     await mockERC20.transfer(target, FEE);
 
-    await mockRelay.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE);
+    // Mimicking diamond encoding
+    const encodedContextData = new ethers.utils.AbiCoder().encode(
+      ["address", "address", "uint256"],
+      [FEE_COLLECTOR, feeToken, FEE]
+    );
+
+    const encodedData = ethers.utils.solidityPack(
+      ["bytes", "bytes"],
+      [data, encodedContextData]
+    );
+
+    await mockRelay.forwardCall(target, encodedData);
 
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
@@ -91,7 +111,18 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
 
     await mockERC20.transfer(target, FEE);
 
-    await mockRelay.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE);
+    // Mimicking diamond encoding
+    const encodedContextData = new ethers.utils.AbiCoder().encode(
+      ["address", "address", "uint256"],
+      [FEE_COLLECTOR, feeToken, FEE]
+    );
+
+    const encodedData = ethers.utils.solidityPack(
+      ["bytes", "bytes"],
+      [data, encodedContextData]
+    );
+
+    await mockRelay.forwardCall(target, encodedData);
 
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
@@ -106,9 +137,18 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
 
     await mockERC20.transfer(target, FEE);
 
-    await expect(
-      mockRelay.forwardCall(target, data, FEE_COLLECTOR, feeToken, FEE)
-    ).to.be.revertedWith(
+    // Mimicking diamond encoding
+    const encodedContextData = new ethers.utils.AbiCoder().encode(
+      ["address", "address", "uint256"],
+      [FEE_COLLECTOR, feeToken, FEE]
+    );
+
+    const encodedData = ethers.utils.solidityPack(
+      ["bytes", "bytes"],
+      [data, encodedContextData]
+    );
+
+    await expect(mockRelay.forwardCall(target, encodedData)).to.be.revertedWith(
       "MockRelay.forwardCall:GelatoRelayContext._transferRelayFeeCapped: maxFee"
     );
   });

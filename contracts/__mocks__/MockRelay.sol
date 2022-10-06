@@ -8,16 +8,8 @@ import {_encodeGelatoRelayContext} from "../functions/GelatoRelayUtils.sol";
 contract MockRelay {
     using GelatoBytes for bytes;
 
-    function forwardCall(
-        address _target,
-        bytes calldata _data,
-        address _feeCollector,
-        address _feeToken,
-        uint256 _fee
-    ) external {
-        (bool success, bytes memory returndata) = _target.call(
-            _encodeGelatoRelayContext(_data, _feeCollector, _feeToken, _fee)
-        );
+    function forwardCall(address _target, bytes calldata _data) external {
+        (bool success, bytes memory returndata) = _target.call(_data);
         if (!success) returndata.revertWithError("MockRelay.forwardCall:");
     }
 }
