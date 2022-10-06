@@ -15,19 +15,20 @@ import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 abstract contract GelatoRelayFeeCollector is GelatoRelayBase {
     uint256 internal constant _FEE_COLLECTOR_START = 32;
 
-    // Only use with previous onlyGelatoRelay or `_isGelatoRelay` checks
+    // Do not confuse with OZ Context.sol _msgData()
+    function __msgData() internal view returns (bytes calldata) {
+        return
+            _isGelatoRelay(msg.sender)
+                ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
+                : msg.data;
+    }
+
+    // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks
     function _getFeeCollector() internal pure returns (address) {
         return
             abi.decode(
                 msg.data[msg.data.length - _FEE_COLLECTOR_START:],
                 (address)
             );
-    }
-
-    function __msgData() internal view returns (bytes calldata) {
-        return
-            _isGelatoRelay(msg.sender)
-                ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
-                : msg.data;
     }
 }
