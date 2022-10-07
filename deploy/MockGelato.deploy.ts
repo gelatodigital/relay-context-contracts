@@ -11,14 +11,17 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     process.exit(1);
   }
 
-  await deploy("MockGelatoRelayContext", {
+  const feeCollector = "0x3AC05161b76a35c1c28dC99Aa01BEd7B24cEA3bf";
+
+  await deploy("MockGelato", {
     from: deployer,
+    args: [feeCollector],
   });
 };
 
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   return hre.network.name !== "hardhat";
 };
-func.tags = ["MockGelatoRelayContext"];
+func.tags = ["MockGelato"];
 
 export default func;
