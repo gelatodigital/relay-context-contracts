@@ -8,7 +8,7 @@ uint256 constant _FEE_COLLECTOR_START = 3 * 32;
 
 // WARNING: Do not use this free fn by itself, always inherit GelatoRelayContext
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
-function __getFeeCollector() pure returns (address) {
+function _getFeeCollectorRelayContext() pure returns (address) {
     return
         abi.decode(
             msg.data[msg.data.length - _FEE_COLLECTOR_START:],
@@ -58,7 +58,7 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
 
     // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks
     function _getFeeCollector() internal pure returns (address) {
-        return __getFeeCollector();
+        return _getFeeCollectorRelayContext();
     }
 
     // Only use with previous onlyGelatoRelay or `_isGelatoRelay` checks
