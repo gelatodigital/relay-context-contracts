@@ -4,6 +4,18 @@ pragma solidity ^0.8.1;
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 import {TokenUtils} from "./lib/TokenUtils.sol";
 
+uint256 constant _FEE_COLLECTOR_START = 3 * 32;
+
+// WARNING: Do not use this free fn by itself, always inherit GelatoRelayContext
+// solhint-disable-next-line func-visibility, private-vars-leading-underscore
+function __getFeeCollector() pure returns (address) {
+    return
+        abi.decode(
+            msg.data[msg.data.length - _FEE_COLLECTOR_START:],
+            (address)
+        );
+}
+
 /**
  * @dev Context variant with feeCollector, feeToken and fee appended to msg.data
  * Expects calldata encoding:
@@ -18,7 +30,6 @@ import {TokenUtils} from "./lib/TokenUtils.sol";
 abstract contract GelatoRelayContext is GelatoRelayBase {
     using TokenUtils for address;
 
-    uint256 internal constant _FEE_COLLECTOR_START = 3 * 32;
     uint256 internal constant _FEE_TOKEN_START = 2 * 32;
     uint256 internal constant _FEE_START = 32;
 
@@ -47,11 +58,7 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
 
     // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks
     function _getFeeCollector() internal pure returns (address) {
-        return
-            abi.decode(
-                msg.data[msg.data.length - _FEE_COLLECTOR_START:],
-                (address)
-            );
+        return __getFeeCollector();
     }
 
     // Only use with previous onlyGelatoRelay or `_isGelatoRelay` checks

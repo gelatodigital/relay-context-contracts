@@ -2,7 +2,6 @@
 pragma solidity ^0.8.1;
 
 import {GelatoBytes} from "../lib/GelatoBytes.sol";
-import {_encodeGelatoRelayContext} from "../functions/GelatoRelayUtils.sol";
 
 /// @dev Mock contracts for testing - UNSAFE CODE - do not copy
 contract MockRelay {
