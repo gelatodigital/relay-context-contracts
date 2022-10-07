@@ -10,3 +10,10 @@ function _encodeGelatoRelayContext(
     return
         abi.encodePacked(_fnArgs, abi.encode(_feeCollector, _feeToken, _fee));
 }
+
+function _encodeFeeCollector(bytes calldata _fnArgs, address _feeCollector)
+    pure
+    returns (bytes memory)
+{
+    return abi.encodePacked(_fnArgs, abi.encode(_feeCollector));
+}
