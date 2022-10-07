@@ -4,14 +4,11 @@ import {
   MockGelato,
   MockRelay,
   MockGelatoRelayContext,
-  MockGelatoRelayFeeCollector,
   MockERC20,
 } from "../typechain";
 
 import {
-  MessageFeeCollectorStruct,
   MessageRelayContextStruct,
-  ExecWithSigsFeeCollectorStruct,
   ExecWithSigsRelayContextStruct,
 } from "../typechain/contracts/__mocks__/MockGelato";
 import { INIT_TOKEN_BALANCE as FEE } from "./constants";
@@ -25,10 +22,8 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
   let mockGelato: MockGelato;
   let mockRelay: MockRelay;
   let mockRelayContext: MockGelatoRelayContext;
-  let mockRelayFeeCollector: MockGelatoRelayFeeCollector;
   let mockERC20: MockERC20;
 
-  let targetFeeCollector: string;
   let targetRelayContext: string;
   let salt: number;
   let deadline: number;
@@ -45,52 +40,15 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     mockGelato = await hre.ethers.getContract("MockGelato");
     mockRelay = await hre.ethers.getContract("MockRelay");
     mockRelayContext = await hre.ethers.getContract("MockGelatoRelayContext");
-    mockRelayFeeCollector = await hre.ethers.getContract(
-      "MockGelatoRelayFeeCollector"
-    );
     mockERC20 = await hre.ethers.getContract("MockERC20");
 
-    targetFeeCollector = mockRelayFeeCollector.address;
     targetRelayContext = mockRelayContext.address;
-    feeToken = mockERC20.address;
     salt = 42069;
     deadline = 2664381086;
     feeToken = mockERC20.address;
   });
 
-  it("#1: emitContextFeeCollector", async () => {
-    const targetPayload =
-      mockRelayFeeCollector.interface.encodeFunctionData("emitFeeCollector");
-    const relayPayload = mockRelay.interface.encodeFunctionData("forwardCall", [
-      targetFeeCollector,
-      targetPayload,
-      false,
-    ]);
-
-    // build calldata
-    const msg: MessageFeeCollectorStruct = {
-      service: mockRelay.address,
-      data: relayPayload,
-      salt,
-      deadline,
-      feeToken,
-    };
-
-    const call: ExecWithSigsFeeCollectorStruct = {
-      correlationId,
-      msg,
-      executorSignerSig: dummySig,
-      checkerSignerSig: dummySig,
-    };
-
-    await expect(mockGelato.execWithSigsFeeCollector(call))
-      .to.emit(mockRelayFeeCollector, "LogMsgData")
-      .withArgs(targetPayload)
-      .and.to.emit(mockRelayFeeCollector, "LogFeeCollector")
-      .withArgs(FEE_COLLECTOR);
-  });
-
-  it("#2: emitContext", async () => {
+  it("#1: emitContext", async () => {
     const targetPayload =
       mockRelayContext.interface.encodeFunctionData("emitContext");
     const relayPayload = mockRelay.interface.encodeFunctionData("forwardCall", [
@@ -123,7 +81,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
       .withArgs(FEE_COLLECTOR, feeToken, FEE);
   });
 
-  it("#3: testTransferRelayFee", async () => {
+  it("#2: testTransferRelayFee", async () => {
     const targetPayload = mockRelayContext.interface.encodeFunctionData(
       "testTransferRelayFee"
     );
@@ -157,7 +115,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
 
-  it("#4: testTransferRelayFeeCapped: works if at maxFee", async () => {
+  it("#3: testTransferRelayFeeCapped: works if at maxFee", async () => {
     const maxFee = FEE;
     const targetPayload = mockRelayContext.interface.encodeFunctionData(
       "testTransferRelayFeeCapped",
@@ -193,7 +151,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
 
-  it("#5: testTransferRelayFeeCapped: works if below maxFee", async () => {
+  it("#4: testTransferRelayFeeCapped: works if below maxFee", async () => {
     const maxFee = FEE.add(1);
     const targetPayload = mockRelayContext.interface.encodeFunctionData(
       "testTransferRelayFeeCapped",
@@ -229,7 +187,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     expect(await mockERC20.balanceOf(FEE_COLLECTOR)).to.be.eq(FEE);
   });
 
-  it("#6: testTransferRelayFeeCapped: reverts if above maxFee", async () => {
+  it("#5: testTransferRelayFeeCapped: reverts if above maxFee", async () => {
     const maxFee = FEE.sub(1);
     const targetPayload = mockRelayContext.interface.encodeFunctionData(
       "testTransferRelayFeeCapped",
@@ -265,7 +223,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     );
   });
 
-  it("#7: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
+  it("#6: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
     await expect(mockRelayContext.testOnlyGelatoRelay()).to.be.revertedWith(
       "GelatoRelayContext.onlyGelatoRelay"
     );

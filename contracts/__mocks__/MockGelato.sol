@@ -32,7 +32,7 @@ contract MockGelato {
         if (!success)
             GelatoBytes.revertWithError(
                 returndata,
-                "ExecWithSigsFacet.execWithSigsSyncFee:"
+                "ExecWithSigsFacet.ExecWithSigsFeeCollector:"
             );
     }
 

@@ -1,59 +1,89 @@
-// import hre = require("hardhat");
-// import { expect } from "chai";
-// import { MockRelay, MockGelatoRelayFeeCollector } from "../typechain";
-// import { ethers } from "hardhat";
+import hre = require("hardhat");
+import { expect } from "chai";
+import {
+  MockGelato,
+  MockRelay,
+  MockGelatoRelayFeeCollector,
+  MockERC20,
+} from "../typechain";
 
-// const FEE_COLLECTOR = "0x3AC05161b76a35c1c28dC99Aa01BEd7B24cEA3bf";
+import {
+  MessageFeeCollectorStruct,
+  ExecWithSigsFeeCollectorStruct,
+} from "../typechain/contracts/__mocks__/MockGelato";
+import { utils } from "ethers";
 
-// describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
-//   let mockRelay: MockRelay;
-//   let mockRelayFeeCollector: MockGelatoRelayFeeCollector;
+const FEE_COLLECTOR = "0x3AC05161b76a35c1c28dC99Aa01BEd7B24cEA3bf";
+const correlationId = utils.formatBytes32String("CORRELATION_ID");
+const dummySig = utils.randomBytes(32);
 
-//   let target: string;
+describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
+  let mockGelato: MockGelato;
+  let mockRelay: MockRelay;
+  let mockRelayFeeCollector: MockGelatoRelayFeeCollector;
+  let mockERC20: MockERC20;
 
-//   beforeEach("tests", async function () {
-//     if (hre.network.name !== "hardhat") {
-//       console.error("Test Suite is meant to be run on hardhat only");
-//       process.exit(1);
-//     }
+  let targetFeeCollector: string;
+  let salt: number;
+  let deadline: number;
+  let feeToken: string;
 
-//     await hre.deployments.fixture();
+  beforeEach("tests", async function () {
+    if (hre.network.name !== "hardhat") {
+      console.error("Test Suite is meant to be run on hardhat only");
+      process.exit(1);
+    }
 
-//     mockRelay = await hre.ethers.getContract("MockRelay");
-//     mockRelayFeeCollector = await hre.ethers.getContract(
-//       "MockGelatoRelayFeeCollector"
-//     );
+    await hre.deployments.fixture();
 
-//     target = mockRelayFeeCollector.address;
-//   });
+    mockGelato = await hre.ethers.getContract("MockGelato");
+    mockRelay = await hre.ethers.getContract("MockRelay");
+    mockRelayFeeCollector = await hre.ethers.getContract(
+      "MockGelatoRelayFeeCollector"
+    );
+    mockERC20 = await hre.ethers.getContract("MockERC20");
 
-//   it("#1: emitFeeCollector", async () => {
-//     const data =
-//       mockRelayFeeCollector.interface.encodeFunctionData("emitFeeCollector");
+    targetFeeCollector = mockRelayFeeCollector.address;
+    salt = 42069;
+    deadline = 2664381086;
+    feeToken = mockERC20.address;
+  });
 
-//     // Mimicking diamond encoding
-//     const encodedFeeCollector = new ethers.utils.AbiCoder().encode(
-//       ["address"],
-//       [FEE_COLLECTOR]
-//     );
+  it("#1: emitFeeCollector", async () => {
+    const targetPayload =
+      mockRelayFeeCollector.interface.encodeFunctionData("emitFeeCollector");
+    const relayPayload = mockRelay.interface.encodeFunctionData("forwardCall", [
+      targetFeeCollector,
+      targetPayload,
+      false,
+    ]);
 
-//     const encodedData = ethers.utils.solidityPack(
-//       ["bytes", "bytes"],
-//       [data, encodedFeeCollector]
-//     );
+    // build calldata
+    const msg: MessageFeeCollectorStruct = {
+      service: mockRelay.address,
+      data: relayPayload,
+      salt,
+      deadline,
+      feeToken,
+    };
 
-//     await expect(mockRelay.forwardCall(target, encodedData))
-//       .to.emit(mockRelayFeeCollector, "LogEntireMsgData")
-//       .withArgs(encodedData)
-//       .and.to.emit(mockRelayFeeCollector, "LogMsgData")
-//       .withArgs(data)
-//       .and.to.emit(mockRelayFeeCollector, "LogFeeCollector")
-//       .withArgs(FEE_COLLECTOR);
-//   });
+    const call: ExecWithSigsFeeCollectorStruct = {
+      correlationId,
+      msg,
+      executorSignerSig: dummySig,
+      checkerSignerSig: dummySig,
+    };
 
-//   it("#2: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
-//     await expect(
-//       mockRelayFeeCollector.testOnlyGelatoRelay()
-//     ).to.be.revertedWith("GelatoRelayContext.onlyGelatoRelay");
-//   });
-// });
+    await expect(mockGelato.execWithSigsFeeCollector(call))
+      .to.emit(mockRelayFeeCollector, "LogMsgData")
+      .withArgs(targetPayload)
+      .and.to.emit(mockRelayFeeCollector, "LogFeeCollector")
+      .withArgs(FEE_COLLECTOR);
+  });
+
+  it("#2: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
+    await expect(
+      mockRelayFeeCollector.testOnlyGelatoRelay()
+    ).to.be.revertedWith("GelatoRelayContext.onlyGelatoRelay");
+  });
+});
