@@ -2,7 +2,6 @@
 pragma solidity ^0.8.1;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
-
 uint256 constant _FEE_COLLECTOR_START = 32;
 
 // WARNING: Do not use this free fn by itself, always inherit GelatoRelayFeeCollector
