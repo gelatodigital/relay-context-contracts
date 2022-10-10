@@ -1,15 +1,32 @@
 import hre = require("hardhat");
 import { expect } from "chai";
-import { MockRelay, MockGelatoRelayFeeCollector } from "../typechain";
-import { ethers } from "hardhat";
+import {
+  MockGelato,
+  MockRelay,
+  MockGelatoRelayFeeCollector,
+  MockERC20,
+} from "../typechain";
+
+import {
+  MessageFeeCollectorStruct,
+  ExecWithSigsFeeCollectorStruct,
+} from "../typechain/contracts/__mocks__/MockGelato";
+import { utils } from "ethers";
 
 const FEE_COLLECTOR = "0x3AC05161b76a35c1c28dC99Aa01BEd7B24cEA3bf";
+const correlationId = utils.formatBytes32String("CORRELATION_ID");
+const dummySig = utils.randomBytes(32);
 
 describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
+  let mockGelato: MockGelato;
   let mockRelay: MockRelay;
   let mockRelayFeeCollector: MockGelatoRelayFeeCollector;
+  let mockERC20: MockERC20;
 
-  let target: string;
+  let targetFeeCollector: string;
+  let salt: number;
+  let deadline: number;
+  let feeToken: string;
 
   beforeEach("tests", async function () {
     if (hre.network.name !== "hardhat") {
@@ -19,34 +36,47 @@ describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
 
     await hre.deployments.fixture();
 
+    mockGelato = await hre.ethers.getContract("MockGelato");
     mockRelay = await hre.ethers.getContract("MockRelay");
     mockRelayFeeCollector = await hre.ethers.getContract(
       "MockGelatoRelayFeeCollector"
     );
+    mockERC20 = await hre.ethers.getContract("MockERC20");
 
-    target = mockRelayFeeCollector.address;
+    targetFeeCollector = mockRelayFeeCollector.address;
+    salt = 42069;
+    deadline = 2664381086;
+    feeToken = mockERC20.address;
   });
 
   it("#1: emitFeeCollector", async () => {
-    const data =
+    const targetPayload =
       mockRelayFeeCollector.interface.encodeFunctionData("emitFeeCollector");
+    const relayPayload = mockRelay.interface.encodeFunctionData("forwardCall", [
+      targetFeeCollector,
+      targetPayload,
+      false,
+    ]);
 
-    // Mimicking diamond encoding
-    const encodedFeeCollector = new ethers.utils.AbiCoder().encode(
-      ["address"],
-      [FEE_COLLECTOR]
-    );
+    // build calldata
+    const msg: MessageFeeCollectorStruct = {
+      service: mockRelay.address,
+      data: relayPayload,
+      salt,
+      deadline,
+      feeToken,
+    };
 
-    const encodedData = ethers.utils.solidityPack(
-      ["bytes", "bytes"],
-      [data, encodedFeeCollector]
-    );
+    const call: ExecWithSigsFeeCollectorStruct = {
+      correlationId,
+      msg,
+      executorSignerSig: dummySig,
+      checkerSignerSig: dummySig,
+    };
 
-    await expect(mockRelay.forwardCall(target, encodedData))
-      .to.emit(mockRelayFeeCollector, "LogEntireMsgData")
-      .withArgs(encodedData)
-      .and.to.emit(mockRelayFeeCollector, "LogMsgData")
-      .withArgs(data)
+    await expect(mockGelato.execWithSigsFeeCollector(call))
+      .to.emit(mockRelayFeeCollector, "LogMsgData")
+      .withArgs(targetPayload)
       .and.to.emit(mockRelayFeeCollector, "LogFeeCollector")
       .withArgs(FEE_COLLECTOR);
   });
