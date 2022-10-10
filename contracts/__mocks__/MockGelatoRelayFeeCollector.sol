@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import {
-    __getFeeCollector,
-    GelatoRelayFeeCollector
-} from "../GelatoRelayFeeCollector.sol";
+import {GelatoRelayFeeCollector} from "../GelatoRelayFeeCollector.sol";
 
 contract MockGelatoRelayFeeCollector is GelatoRelayFeeCollector {
     event LogMsgData(bytes data);
@@ -12,7 +9,7 @@ contract MockGelatoRelayFeeCollector is GelatoRelayFeeCollector {
 
     function emitFeeCollector() external {
         emit LogMsgData(__msgData());
-        emit LogFeeCollector(__getFeeCollector());
+        emit LogFeeCollector(_getFeeCollector());
     }
 
     // solhint-disable-next-line no-empty-blocks

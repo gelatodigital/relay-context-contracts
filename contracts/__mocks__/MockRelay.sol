@@ -3,20 +3,19 @@ pragma solidity ^0.8.1;
 
 import {GelatoCallUtils} from "../lib/GelatoCallUtils.sol";
 import {GelatoBytes} from "../lib/GelatoBytes.sol";
-
-import {__getFeeCollector} from "../GelatoRelayFeeCollector.sol";
 import {
     _getFeeCollectorRelayContext,
-    GelatoRelayContext
+    _getFeeTokenRelayContext,
+    _getFeeRelayContext
 } from "../GelatoRelayContext.sol";
-
+import {__getFeeCollector} from "../GelatoRelayFeeCollector.sol";
 import {
     _encodeFeeCollector,
     _encodeGelatoRelayContext
 } from "../functions/GelatoRelayUtils.sol";
 
 /// @dev Mock contracts for testing - UNSAFE CODE - do not copy
-contract MockRelay is GelatoRelayContext {
+contract MockRelay {
     using GelatoCallUtils for address;
     using GelatoBytes for bytes;
 
@@ -30,8 +29,8 @@ contract MockRelay is GelatoRelayContext {
                 _encodeGelatoRelayContext(
                     _data,
                     _getFeeCollectorRelayContext(),
-                    _getFeeToken(),
-                    _getFee()
+                    _getFeeTokenRelayContext(),
+                    _getFeeRelayContext()
                 ),
                 "MockRelay.forwardCall:"
             )

@@ -5,6 +5,8 @@ import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 import {TokenUtils} from "./lib/TokenUtils.sol";
 
 uint256 constant _FEE_COLLECTOR_START = 3 * 32;
+uint256 constant _FEE_TOKEN_START = 2 * 32;
+uint256 constant _FEE_START = 32;
 
 // WARNING: Do not use this free fn by itself, always inherit GelatoRelayContext
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
@@ -14,6 +16,18 @@ function _getFeeCollectorRelayContext() pure returns (address) {
             msg.data[msg.data.length - _FEE_COLLECTOR_START:],
             (address)
         );
+}
+
+// WARNING: Do not use this free fn by itself, always inherit GelatoRelayContext
+// solhint-disable-next-line func-visibility, private-vars-leading-underscore
+function _getFeeTokenRelayContext() pure returns (address) {
+    return abi.decode(msg.data[msg.data.length - _FEE_TOKEN_START:], (address));
+}
+
+// WARNING: Do not use this free fn by itself, always inherit GelatoRelayContext
+// solhint-disable-next-line func-visibility, private-vars-leading-underscore
+function _getFeeRelayContext() pure returns (uint256) {
+    return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
 }
 
 /**
@@ -29,9 +43,6 @@ function _getFeeCollectorRelayContext() pure returns (address) {
 /// @dev Do not use with GelatoRelayFeeCollector - pick only one
 abstract contract GelatoRelayContext is GelatoRelayBase {
     using TokenUtils for address;
-
-    uint256 internal constant _FEE_TOKEN_START = 2 * 32;
-    uint256 internal constant _FEE_START = 32;
 
     // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
     function _transferRelayFee() internal {
@@ -63,15 +74,11 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
 
     // Only use with previous onlyGelatoRelay or `_isGelatoRelay` checks
     function _getFeeToken() internal pure returns (address) {
-        return
-            abi.decode(
-                msg.data[msg.data.length - _FEE_TOKEN_START:],
-                (address)
-            );
+        return _getFeeTokenRelayContext();
     }
 
     // Only use with previous onlyGelatoRelay or `_isGelatoRelay` checks
     function _getFee() internal pure returns (uint256) {
-        return abi.decode(msg.data[msg.data.length - _FEE_START:], (uint256));
+        return _getFeeRelayContext();
     }
 }
