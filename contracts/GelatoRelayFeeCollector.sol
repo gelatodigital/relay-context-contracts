@@ -2,25 +2,22 @@
 pragma solidity ^0.8.1;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
-uint256 constant _FEE_COLLECTOR_START = 32;
 
 // WARNING: Do not use this free fn by itself, always inherit GelatoRelayFeeCollector
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
-function __getFeeCollector() pure returns (address) {
-    return
-        abi.decode(
-            msg.data[msg.data.length - _FEE_COLLECTOR_START:],
-            (address)
-        );
+function __getFeeCollector() pure returns (address feeCollector) {
+    assembly {
+        feeCollector := shr(96, calldataload(sub(calldatasize(), 20)))
+    }
 }
 
 /**
  * @dev Context variant with only feeCollector appended to msg.data
  * Expects calldata encoding:
  *   abi.encodePacked(bytes data, address feeCollectorAddress)
- * Therefore, we're expecting 32bytes to be appended to normal msgData
- * 32bytes start offsets from calldatasize:
- *    feeCollector: - 32
+ * Therefore, we're expecting 20bytes to be appended to normal msgData
+ * 20bytes start offsets from calldatasize:
+ *    feeCollector: -20
  */
 /// @dev Do not use with GelatoRelayFeeCollector - pick only one
 abstract contract GelatoRelayFeeCollector is GelatoRelayBase {
@@ -28,7 +25,7 @@ abstract contract GelatoRelayFeeCollector is GelatoRelayBase {
     function __msgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
-                ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
+                ? msg.data[:msg.data.length - 20]
                 : msg.data;
     }
 

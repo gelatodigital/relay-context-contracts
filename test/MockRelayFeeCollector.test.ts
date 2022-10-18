@@ -75,9 +75,7 @@ describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
     };
 
     await expect(mockGelato.execWithSigsFeeCollector(call))
-      .to.emit(mockRelayFeeCollector, "LogMsgData")
-      .withArgs(targetPayload)
-      .and.to.emit(mockRelayFeeCollector, "LogFeeCollector")
+      .to.emit(mockRelayFeeCollector, "LogFeeCollector")
       .withArgs(FEE_COLLECTOR);
   });
 
