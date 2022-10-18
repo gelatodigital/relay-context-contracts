@@ -14,5 +14,5 @@ function _encodeFeeCollector(bytes calldata _data, address _feeCollector)
     pure
     returns (bytes memory)
 {
-    return abi.encodePacked(_data, abi.encode(_feeCollector));
+    return abi.encodePacked(_data, _feeCollector);
 }
