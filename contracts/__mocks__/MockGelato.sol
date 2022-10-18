@@ -12,8 +12,6 @@ import {
     _encodeGelatoRelayContext
 } from "../functions/GelatoRelayUtils.sol";
 
-import "hardhat/console.sol";
-
 contract MockGelato {
     using GelatoCallUtils for address;
 
