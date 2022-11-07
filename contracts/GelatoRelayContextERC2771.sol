@@ -16,7 +16,10 @@ function _getFeeCollectorRelayContextERC2771()
     returns (address feeCollector)
 {
     assembly {
-        feeCollector := shr(96, calldataload(sub(calldatasize(), 92)))
+        feeCollector := shr(
+            96,
+            calldataload(sub(calldatasize(), _FEE_COLLECTOR_START))
+        )
     }
 }
 
@@ -24,7 +27,7 @@ function _getFeeCollectorRelayContextERC2771()
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getFeeTokenRelayContextERC2771() pure returns (address feeToken) {
     assembly {
-        feeToken := shr(96, calldataload(sub(calldatasize(), 72)))
+        feeToken := shr(96, calldataload(sub(calldatasize(), _FEE_TOKEN_START)))
     }
 }
 
@@ -32,7 +35,7 @@ function _getFeeTokenRelayContextERC2771() pure returns (address feeToken) {
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getFeeRelayContextERC2771() pure returns (uint256 fee) {
     assembly {
-        fee := calldataload(sub(calldatasize(), 52))
+        fee := calldataload(sub(calldatasize(), _FEE_START))
     }
 }
 
@@ -40,7 +43,10 @@ function _getFeeRelayContextERC2771() pure returns (uint256 fee) {
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getMsgSenderRelayContextERC2771() pure returns (address _msgSender) {
     assembly {
-        _msgSender := shr(96, calldataload(sub(calldatasize(), 20)))
+        _msgSender := shr(
+            96,
+            calldataload(sub(calldatasize(), _MSG_SENDER_START))
+        )
     }
 }
 
@@ -49,7 +55,9 @@ function _getMsgSenderRelayContextERC2771() pure returns (address _msgSender) {
  * Expects calldata encoding:
     abi.encodePacked(
         _data,
-        abi.encodePacked(_feeCollector, _feeToken, _fee), // relayContext
+        _feeCollector,
+        _feeToken,
+        _fee,
         _msgSender
     );
  * Therefore, we're expecting 20 + 20 + 32 + 20 = 92 bytes to be appended to normal msgData
@@ -78,7 +86,7 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayBase {
     }
 
     // Do not confuse with OZ Context.sol _msgData()
-    function __msgData() internal view returns (bytes calldata) {
+    function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]

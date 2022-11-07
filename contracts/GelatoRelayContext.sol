@@ -12,7 +12,10 @@ uint256 constant _FEE_START = 32; // offset: uint256
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getFeeCollectorRelayContext() pure returns (address feeCollector) {
     assembly {
-        feeCollector := shr(96, calldataload(sub(calldatasize(), 72)))
+        feeCollector := shr(
+            96,
+            calldataload(sub(calldatasize(), _FEE_COLLECTOR_START))
+        )
     }
 }
 
@@ -20,7 +23,7 @@ function _getFeeCollectorRelayContext() pure returns (address feeCollector) {
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getFeeTokenRelayContext() pure returns (address feeToken) {
     assembly {
-        feeToken := shr(96, calldataload(sub(calldatasize(), 52)))
+        feeToken := shr(96, calldataload(sub(calldatasize(), _FEE_TOKEN_START)))
     }
 }
 
@@ -28,7 +31,7 @@ function _getFeeTokenRelayContext() pure returns (address feeToken) {
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getFeeRelayContext() pure returns (uint256 fee) {
     assembly {
-        fee := calldataload(sub(calldatasize(), 32))
+        fee := calldataload(sub(calldatasize(), _FEE_START))
     }
 }
 
@@ -36,7 +39,9 @@ function _getFeeRelayContext() pure returns (uint256 fee) {
  * @dev Context variant with feeCollector, feeToken and fee appended to msg.data
  * Expects calldata encoding:
  * abi.encodePacked( _data,
- *                   abi.encode(abi.encodePacked(_feeCollector, _feeToken), _fee) // relayContext );
+ *                   _feeCollector,
+ *                   _feeToken,
+ *                   _fee);
  * Therefore, we're expecting 20 + 20 + 32 = 72 bytes to be appended to normal msgData
  * 32bytes start offsets from calldatasize:
  *     feeCollector: - 72 bytes
@@ -63,7 +68,7 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
     }
 
     // Do not confuse with OZ Context.sol _msgData()
-    function __msgData() internal view returns (bytes calldata) {
+    function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]

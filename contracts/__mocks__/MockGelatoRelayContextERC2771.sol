@@ -13,7 +13,7 @@ contract MockGelatoRelayContextERC2771 is GelatoRelayContextERC2771 {
     );
 
     function emitContext() external {
-        emit LogMsgData(__msgData());
+        emit LogMsgData(_getMsgData());
         emit LogContext(
             _getFeeCollector(),
             _getFeeToken(),

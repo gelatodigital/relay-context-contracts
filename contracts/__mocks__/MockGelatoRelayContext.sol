@@ -8,7 +8,7 @@ contract MockGelatoRelayContext is GelatoRelayContext {
     event LogContext(address feeCollector, address feeToken, uint256 fee);
 
     function emitContext() external {
-        emit LogMsgData(__msgData());
+        emit LogMsgData(_getMsgData());
         emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
     }
 

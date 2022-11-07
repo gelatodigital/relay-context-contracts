@@ -20,11 +20,7 @@ function _encodeRelayContext(
     address _feeToken,
     uint256 _fee
 ) pure returns (bytes memory) {
-    return
-        abi.encodePacked(
-            _data,
-            abi.encodePacked(_feeCollector, _feeToken, _fee) // relayContext
-        );
+    return abi.encodePacked(_data, _feeCollector, _feeToken, _fee);
 }
 
 // ERC2771 Encodings
@@ -53,10 +49,5 @@ function _encodeRelayContextERC2771(
     uint256 _fee,
     address _msgSender
 ) pure returns (bytes memory) {
-    return
-        abi.encodePacked(
-            _data,
-            abi.encodePacked(_feeCollector, _feeToken, _fee), // relayContext
-            _msgSender
-        );
+    return abi.encodePacked(_data, _feeCollector, _feeToken, _fee, _msgSender);
 }

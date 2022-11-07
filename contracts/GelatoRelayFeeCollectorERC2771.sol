@@ -10,7 +10,10 @@ uint256 constant _MSG_SENDER_START = 20; // offset: address
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getFeeCollectorERC2771() pure returns (address feeCollector) {
     assembly {
-        feeCollector := shr(96, calldataload(sub(calldatasize(), 40)))
+        feeCollector := shr(
+            96,
+            calldataload(sub(calldatasize(), _FEE_COLLECTOR_START))
+        )
     }
 }
 
@@ -18,7 +21,10 @@ function _getFeeCollectorERC2771() pure returns (address feeCollector) {
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function _getMsgSenderFeeCollectorERC2771() pure returns (address _msgSender) {
     assembly {
-        _msgSender := shr(96, calldataload(sub(calldatasize(), 20)))
+        _msgSender := shr(
+            96,
+            calldataload(sub(calldatasize(), _MSG_SENDER_START))
+        )
     }
 }
 
@@ -33,10 +39,10 @@ function _getMsgSenderFeeCollectorERC2771() pure returns (address _msgSender) {
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
 abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayBase {
     // Do not confuse with OZ Context.sol _msgData()
-    function __msgData() internal view returns (bytes calldata) {
+    function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
-                ? msg.data[:msg.data.length - 40]
+                ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
                 : msg.data;
     }
 
