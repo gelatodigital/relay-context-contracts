@@ -23,7 +23,7 @@ describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
   let mockRelayFeeCollector: MockGelatoRelayFeeCollector;
   let mockERC20: MockERC20;
 
-  let targetFeeCollector: string;
+  let targetAddress: string;
   let salt: number;
   let deadline: number;
   let feeToken: string;
@@ -43,7 +43,7 @@ describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
     );
     mockERC20 = await hre.ethers.getContract("MockERC20");
 
-    targetFeeCollector = mockRelayFeeCollector.address;
+    targetAddress = mockRelayFeeCollector.address;
     salt = 42069;
     deadline = 2664381086;
     feeToken = mockERC20.address;
@@ -53,7 +53,7 @@ describe("Test MockGelatoRelayFeeCollector Smart Contract", function () {
     const targetPayload =
       mockRelayFeeCollector.interface.encodeFunctionData("emitFeeCollector");
     const relayPayload = mockRelay.interface.encodeFunctionData("forwardCall", [
-      targetFeeCollector,
+      targetAddress,
       targetPayload,
       false,
     ]);

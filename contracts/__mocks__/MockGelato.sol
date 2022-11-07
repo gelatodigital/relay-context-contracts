@@ -9,7 +9,7 @@ import {GelatoBytes} from "../lib/GelatoBytes.sol";
 import {GelatoCallUtils} from "../lib/GelatoCallUtils.sol";
 import {
     _encodeFeeCollector,
-    _encodeGelatoRelayContext
+    _encodeRelayContext
 } from "../functions/GelatoRelayUtils.sol";
 
 contract MockGelato {
@@ -41,7 +41,7 @@ contract MockGelato {
     {
         // call forward + append fee collector, feeToken, fee
         _call.msg.service.revertingContractCall(
-            _encodeGelatoRelayContext(
+            _encodeRelayContext(
                 _call.msg.data,
                 feeCollector,
                 _call.msg.feeToken,
