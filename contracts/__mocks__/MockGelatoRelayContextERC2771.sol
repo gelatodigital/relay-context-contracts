@@ -1,15 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import {GelatoRelayContext} from "../GelatoRelayContext.sol";
+import {GelatoRelayContextERC2771} from "../GelatoRelayContextERC2771.sol";
 
-contract MockGelatoRelayContext is GelatoRelayContext {
+contract MockGelatoRelayContextERC2771 is GelatoRelayContextERC2771 {
     event LogMsgData(bytes data);
-    event LogContext(address feeCollector, address feeToken, uint256 fee);
+    event LogContext(
+        address feeCollector,
+        address feeToken,
+        uint256 fee,
+        address _msgSender
+    );
 
     function emitContext() external {
         emit LogMsgData(_getMsgData());
-        emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
+        emit LogContext(
+            _getFeeCollector(),
+            _getFeeToken(),
+            _getFee(),
+            _getMsgSender()
+        );
     }
 
     function testTransferRelayFee() external {

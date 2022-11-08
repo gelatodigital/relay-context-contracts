@@ -3,11 +3,16 @@ pragma solidity ^0.8.1;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 
+uint256 constant _FEE_COLLECTOR_START = 20;
+
 // WARNING: Do not use this free fn by itself, always inherit GelatoRelayFeeCollector
 // solhint-disable-next-line func-visibility, private-vars-leading-underscore
 function __getFeeCollector() pure returns (address feeCollector) {
     assembly {
-        feeCollector := shr(96, calldataload(sub(calldatasize(), 20)))
+        feeCollector := shr(
+            96,
+            calldataload(sub(calldatasize(), _FEE_COLLECTOR_START))
+        )
     }
 }
 
@@ -22,10 +27,10 @@ function __getFeeCollector() pure returns (address feeCollector) {
 /// @dev Do not use with GelatoRelayFeeCollector - pick only one
 abstract contract GelatoRelayFeeCollector is GelatoRelayBase {
     // Do not confuse with OZ Context.sol _msgData()
-    function __msgData() internal view returns (bytes calldata) {
+    function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
-                ? msg.data[:msg.data.length - 20]
+                ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
                 : msg.data;
     }
 

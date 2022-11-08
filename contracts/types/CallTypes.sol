@@ -45,3 +45,9 @@ struct ExecWithSigsRelayContext {
     bytes executorSignerSig;
     bytes checkerSignerSig;
 }
+
+struct CallWithERC2771 {
+    address target;
+    bytes data;
+    address user;
+}

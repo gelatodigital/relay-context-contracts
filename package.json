@@ -1,6 +1,6 @@
 {
   "name": "@gelatonetwork/relay-context",
-  "version": "1.0.0",
+  "version": "2.0.0-3",
   "description": "Solidity and test helpers for implementing GelatoRelayContext",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -12,7 +12,9 @@
     "contracts/lib",
     "contracts/vendor",
     "contracts/GelatoRelayContext.sol",
-    "contracts/GelatoRelayFeeCollector.sol"
+    "contracts/GelatoRelayContextERC2771.sol",
+    "contracts/GelatoRelayFeeCollector.sol",
+    "contracts/GelatoRelayFeeCollectorERC2771.sol"
   ],
   "scripts": {
     "build": "yarn install && yarn compile && npx tsc",
