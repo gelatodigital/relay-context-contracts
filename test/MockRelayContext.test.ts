@@ -225,7 +225,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
 
   it("#6: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
     await expect(mockRelayContext.testOnlyGelatoRelay()).to.be.revertedWith(
-      "GelatoRelayContext.onlyGelatoRelay"
+      "onlyGelatoRelay"
     );
   });
 });
