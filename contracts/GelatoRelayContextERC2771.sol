@@ -85,12 +85,21 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayBase {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
-    // Do not confuse with OZ Context.sol _msgData()
+    // Do not confuse with OZ (ERC2771)Context.sol _msgData()
     function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
                 : msg.data;
+    }
+
+    /// @dev If using both `GelatoRelayContextERC2771` and `ERC2771Context` from OZ:
+    /// Make sure to differentiate between _msgSender() from OZ and _getMsgSender() from Gelato!
+    function _getMsgSender() internal view returns (address) {
+        return
+            _isGelatoRelayERC2771(msg.sender)
+                ? _getMsgSenderRelayContextERC2771()
+                : msg.sender;
     }
 
     // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks
@@ -106,9 +115,5 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayBase {
     // Only use with previous onlyGelatoRelay or `_isGelatoRelay` checks
     function _getFee() internal pure returns (uint256) {
         return _getFeeRelayContextERC2771();
-    }
-
-    function _getMsgSender() internal pure returns (address) {
-        return _getMsgSenderRelayContextERC2771();
     }
 }

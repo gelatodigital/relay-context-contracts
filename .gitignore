@@ -11,6 +11,9 @@ coverage
 # cache
 .eslintcache
 
+# local deployments
+deployments/localhost
+
 # hardhat
 artifacts
 cache
