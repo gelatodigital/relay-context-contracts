@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.1;
+pragma solidity ^0.8.9;
 
 // Four different types of calldata packing
 // 1. encodeFeeCollector: append 20 byte feeCollector address

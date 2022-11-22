@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.1;
+pragma solidity ^0.8.9;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 import {TokenUtils} from "./lib/TokenUtils.sol";
+import {
+    ERC2771Context
+} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 uint256 constant _FEE_COLLECTOR_START = 92; // offset: address + address + uint256 + address
 uint256 constant _FEE_TOKEN_START = 72; // offset: address + uint256 + address
@@ -67,8 +70,11 @@ function _getMsgSenderRelayContextERC2771() pure returns (address _msgSender) {
  *     _msgSender: - 20 bytes
  */
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
-abstract contract GelatoRelayContextERC2771 is GelatoRelayBase {
+abstract contract GelatoRelayContextERC2771 is ERC2771Context, GelatoRelayBase {
     using TokenUtils for address;
+
+    // solhint-disable-next-line no-empty-blocks
+    constructor(address _trustedForwarder) ERC2771Context(_trustedForwarder) {}
 
     // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
     function _transferRelayFee() internal {
@@ -85,21 +91,22 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayBase {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
-    // Do not confuse with OZ (ERC2771)Context.sol _msgData()
-    function _getMsgData() internal view returns (bytes calldata) {
+    /// @dev automatic ERC2771Context support from OZ: you can set a trustedForwarder
+    /// and use OZ's ERC2771Context as needed.
+    function _msgData() internal view override returns (bytes calldata) {
         return
-            _isGelatoRelay(msg.sender)
+            _isGelatoRelayERC2771(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
-                : msg.data;
+                : super._msgData();
     }
 
-    /// @dev If using both `GelatoRelayContextERC2771` and `ERC2771Context` from OZ:
-    /// Make sure to differentiate between _msgSender() from OZ and _getMsgSender() from Gelato!
-    function _getMsgSender() internal view returns (address) {
+    /// @dev automatic ERC2771Context support from OZ: you can set a trustedForwarder
+    /// and use OZ's ERC2771Context as needed.
+    function _msgSender() internal view override returns (address) {
         return
             _isGelatoRelayERC2771(msg.sender)
                 ? _getMsgSenderRelayContextERC2771()
-                : msg.sender;
+                : super._msgSender();
     }
 
     // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks

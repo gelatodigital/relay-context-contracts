@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.1;
+pragma solidity ^0.8.9;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
+import {
+    ERC2771Context
+} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 uint256 constant _FEE_COLLECTOR_START = 40; // offset: address + address
 uint256 constant _MSG_SENDER_START = 20; // offset: address
@@ -37,22 +40,29 @@ function _getMsgSenderFeeCollectorERC2771() pure returns (address _msgSender) {
  *    _msgSender: - 20 bytes
  */
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
-abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayBase {
-    // Do not confuse with OZ Context.sol _msgData()
-    function _getMsgData() internal view returns (bytes calldata) {
+abstract contract GelatoRelayFeeCollectorERC2771 is
+    ERC2771Context,
+    GelatoRelayBase
+{
+    // solhint-disable-next-line no-empty-blocks
+    constructor(address _trustedForwarder) ERC2771Context(_trustedForwarder) {}
+
+    /// @dev automatic ERC2771Context support from OZ: you can set a trustedForwarder
+    /// and use OZ's ERC2771Context as needed.
+    function _msgData() internal view override returns (bytes calldata) {
         return
             _isGelatoRelayERC2771(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
-                : msg.data;
+                : super._msgData();
     }
 
-    /// @dev If using both `GelatoRelayFeeCollectorERC2771` and `ERC2771Context` from OZ:
-    /// Make sure to differentiate between _msgSender() from OZ and _getMsgSender() from Gelato!
-    function _getMsgSender() internal view returns (address) {
+    /// @dev automatic ERC2771Context support from OZ: you can set a trustedForwarder
+    /// and use OZ's ERC2771Context as needed.
+    function _msgSender() internal view override returns (address) {
         return
             _isGelatoRelayERC2771(msg.sender)
                 ? _getMsgSenderFeeCollectorERC2771()
-                : msg.sender;
+                : super._msgSender();
     }
 
     // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks

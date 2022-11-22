@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.1;
+pragma solidity ^0.8.9;
 
 import {GelatoRelayContextERC2771} from "../GelatoRelayContextERC2771.sol";
 
@@ -12,13 +12,17 @@ contract MockGelatoRelayContextERC2771 is GelatoRelayContextERC2771 {
         address _msgSender
     );
 
+    constructor(address _trustedForwarder)
+        GelatoRelayContextERC2771(_trustedForwarder)
+    {} // solhint-disable-line no-empty-blocks
+
     function emitContext() external {
-        emit LogMsgData(_getMsgData());
+        emit LogMsgData(_msgData());
         emit LogContext(
             _getFeeCollector(),
             _getFeeToken(),
             _getFee(),
-            _getMsgSender()
+            _msgSender()
         );
     }
 

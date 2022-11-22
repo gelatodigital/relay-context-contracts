@@ -1,14 +1,29 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.1;
+pragma solidity ^0.8.9;
 
 import {GelatoRelayContext} from "../GelatoRelayContext.sol";
+import "hardhat/console.sol";
 
 contract MockGelatoRelayContext is GelatoRelayContext {
     event LogMsgData(bytes data);
     event LogContext(address feeCollector, address feeToken, uint256 fee);
 
+    constructor(address _trustedForwarder)
+        GelatoRelayContext(_trustedForwarder)
+    {} // solhint-disable-line no-empty-blocks
+
     function emitContext() external {
-        emit LogMsgData(_getMsgData());
+        bytes calldata temp = _msgData();
+        address feeCollector = _getFeeCollector();
+        address feeToken = _getFeeToken();
+        uint256 fee = _getFee();
+        console.logBytes(temp);
+        console.log(feeCollector);
+        console.log(feeToken);
+        console.log(fee);
+
+        emit LogMsgData(_msgData());
+
         emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());
     }
 
