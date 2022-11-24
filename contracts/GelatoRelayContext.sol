@@ -3,9 +3,6 @@ pragma solidity ^0.8.9;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 import {TokenUtils} from "./lib/TokenUtils.sol";
-import {
-    ERC2771Context
-} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 uint256 constant _FEE_COLLECTOR_START = 72; // offset: address + address + uint256
 uint256 constant _FEE_TOKEN_START = 52; // offset: address + uint256
@@ -52,11 +49,8 @@ function _getFeeRelayContext() pure returns (uint256 fee) {
  *     fee: - 32 bytes
  */
 /// @dev Do not use with GelatoRelayFeeCollector - pick only one
-abstract contract GelatoRelayContext is ERC2771Context, GelatoRelayBase {
+abstract contract GelatoRelayContext is GelatoRelayBase {
     using TokenUtils for address;
-
-    // solhint-disable-next-line no-empty-blocks
-    constructor(address _trustedForwarder) ERC2771Context(_trustedForwarder) {}
 
     // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
     function _transferRelayFee() internal {
@@ -73,13 +67,11 @@ abstract contract GelatoRelayContext is ERC2771Context, GelatoRelayBase {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
-    /// @dev automatic ERC2771Context support from OZ: you can set a trustedForwarder
-    /// and use OZ's ERC2771Context as needed.
-    function _msgData() internal view override returns (bytes calldata) {
+    function _msgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
-                : super._msgData();
+                : msg.data;
     }
 
     // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks

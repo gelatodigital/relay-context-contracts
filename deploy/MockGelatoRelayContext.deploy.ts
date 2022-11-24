@@ -6,8 +6,6 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const mockRelay = await deployments.get("MockRelay");
-
   if (hre.network.name !== "hardhat") {
     console.error(`Only deploy Mock on hardhat`);
     process.exit(1);
@@ -15,7 +13,6 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   await deploy("MockGelatoRelayContext", {
     from: deployer,
-    args: [mockRelay.address],
   });
 };
 
