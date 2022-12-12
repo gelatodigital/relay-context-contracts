@@ -132,7 +132,7 @@ describe("Test MockGelatoRelayFeeCollectorERC2771 Smart Contract", function () {
 
   it("#2: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
     await expect(
-      mockRelayFeeCollectorERC2771.testOnlyGelatoRelay()
+      mockRelayFeeCollectorERC2771.testOnlyGelatoRelayERC2771()
     ).to.be.revertedWith("onlyGelatoRelay");
   });
 });

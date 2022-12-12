@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.1;
 
 import {GelatoCallUtils} from "../lib/GelatoCallUtils.sol";
 import {GelatoBytes} from "../lib/GelatoBytes.sol";

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.1;
 
 import {GelatoRelayERC2771Base} from "./base/GelatoRelayERC2771Base.sol";
-import {ERC2771Context} from "./vendor/ERC2771Context.sol";
 
 uint256 constant _FEE_COLLECTOR_START = 40; // offset: address + address
 uint256 constant _MSG_SENDER_START = 20; // offset: address
@@ -38,49 +37,20 @@ function _getMsgSenderFeeCollectorERC2771() pure returns (address _msgSender) {
  *    _msgSender: - 20 bytes
  */
 
-/**
- * @dev If you are using in combination with ERC2771Context from OpenZeppellin
- * i.e. you are wanting to use multiple relayers
- * https://docs.openzeppelin.com/contracts/4.x/api/metatx
- * You will have to set a `trustedForwarder` in your target contract's constructor:
- * constructor(address _trustedForwarder) GelatoRelayContextERC2771(_trustedForwarder);
- *
- * You can set the `trustedForwarder` as:
- * 1. A trusted relayer address other than GelatoRelayERC2771.sol
- * 2. If no backup relayer is needed, and you are only using Gelato Relay:
- *      a. set `trustedForwarder` to address(0)
- * 3. Otherwise, DO NOT set the trustedForwarder as GelatoRealyERC2771
- *      a. this is hard coded already, please use either:
- *          I. onlyGelatoRelayERC2771()
- *          II. _isGelatoRelayERC2771()
- */
-
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
-abstract contract GelatoRelayFeeCollectorERC2771 is
-    ERC2771Context,
-    GelatoRelayERC2771Base
-{
-    // solhint-disable-next-line no-empty-blocks
-    constructor(address _trustedForwarder) ERC2771Context(_trustedForwarder) {}
-
-    function _msgData()
-        internal
-        view
-        virtual
-        override
-        returns (bytes calldata)
-    {
+abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayERC2771Base {
+    function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelayERC2771(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
-                : super._msgData();
+                : msg.data;
     }
 
-    function _msgSender() internal view virtual override returns (address) {
+    function _getMsgSender() internal view returns (address) {
         return
             _isGelatoRelayERC2771(msg.sender)
                 ? _getMsgSenderFeeCollectorERC2771()
-                : super._msgSender();
+                : msg.sender;
     }
 
     // Only use with GelatoRelayERC2771Base onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks

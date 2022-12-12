@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.1;
 
 import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
 import {TokenUtils} from "./lib/TokenUtils.sol";
@@ -67,7 +67,7 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
-    function _msgData() internal view returns (bytes calldata) {
+    function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
