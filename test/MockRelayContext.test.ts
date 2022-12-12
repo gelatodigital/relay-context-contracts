@@ -43,7 +43,7 @@ describe("Test MockGelatoRelayContext Smart Contract", function () {
     mockERC20 = await hre.ethers.getContract("MockERC20");
 
     targetRelayContext = mockRelayContext.address;
-    salt = 42069;
+    salt = Date.now();
     deadline = 2664381086;
     feeToken = mockERC20.address;
   });

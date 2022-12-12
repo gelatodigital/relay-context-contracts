@@ -19,6 +19,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   return hre.network.name !== "hardhat";
 };
+func.dependencies = ["MockRelay"];
 func.tags = ["MockGelatoRelayContext"];
 
 export default func;

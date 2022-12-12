@@ -13,7 +13,7 @@ const config: HardhatUserConfig = {
       default: 0,
     },
   },
-  solidity: "0.8.1",
+  solidity: "0.8.9",
   typechain: {
     outDir: "typechain",
     target: "ethers-v5",

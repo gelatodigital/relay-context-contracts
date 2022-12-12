@@ -18,5 +18,5 @@ contract MockGelatoRelayFeeCollectorERC2771 is GelatoRelayFeeCollectorERC2771 {
     }
 
     // solhint-disable-next-line no-empty-blocks
-    function testOnlyGelatoRelay() external onlyGelatoRelay {}
+    function testOnlyGelatoRelayERC2771() external onlyGelatoRelayERC2771 {}
 }

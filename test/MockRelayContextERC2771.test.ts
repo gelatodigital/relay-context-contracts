@@ -18,7 +18,6 @@ import { INIT_TOKEN_BALANCE as FEE } from "./constants";
 import { utils } from "ethers";
 
 const FEE_COLLECTOR = "0x3AC05161b76a35c1c28dC99Aa01BEd7B24cEA3bf";
-const MSG_SENDER = "0xDA9644C2c2B6F50426EaBa9ce1B853e99f2D4fCa";
 const correlationId = utils.formatBytes32String("CORRELATION_ID");
 const dummySig = utils.randomBytes(32);
 
@@ -29,6 +28,7 @@ describe("Test MockGelatoRelayContextERC2771 Smart Contract", function () {
   let mockERC20: MockERC20;
 
   let targetAddress: string;
+  let MSG_SENDER: string;
   let salt: number;
   let deadline: number;
   let feeToken: string;
@@ -49,6 +49,7 @@ describe("Test MockGelatoRelayContextERC2771 Smart Contract", function () {
     mockERC20 = await hre.ethers.getContract("MockERC20");
 
     targetAddress = mockRelayContextERC2771.address;
+    MSG_SENDER = mockRelay.address;
     salt = 42069;
     deadline = 2664381086;
     feeToken = mockERC20.address;
@@ -258,7 +259,7 @@ describe("Test MockGelatoRelayContextERC2771 Smart Contract", function () {
 
   it("#6: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
     await expect(
-      mockRelayContextERC2771.testOnlyGelatoRelay()
+      mockRelayContextERC2771.testOnlyGelatoRelayERC2771()
     ).to.be.revertedWith("onlyGelatoRelay");
   });
 });

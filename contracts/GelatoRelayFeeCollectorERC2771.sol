@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import {GelatoRelayBase} from "./base/GelatoRelayBase.sol";
+import {GelatoRelayERC2771Base} from "./base/GelatoRelayERC2771Base.sol";
 
 uint256 constant _FEE_COLLECTOR_START = 40; // offset: address + address
 uint256 constant _MSG_SENDER_START = 20; // offset: address
@@ -36,22 +36,25 @@ function _getMsgSenderFeeCollectorERC2771() pure returns (address _msgSender) {
  *    feeCollector: - 40 bytes
  *    _msgSender: - 20 bytes
  */
+
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
-abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayBase {
-    // Do not confuse with OZ Context.sol _msgData()
+abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayERC2771Base {
     function _getMsgData() internal view returns (bytes calldata) {
         return
-            _isGelatoRelay(msg.sender)
+            _isGelatoRelayERC2771(msg.sender)
                 ? msg.data[:msg.data.length - _FEE_COLLECTOR_START]
                 : msg.data;
     }
 
-    // Only use with GelatoRelayBase onlyGelatoRelay or `_isGelatoRelay` checks
-    function _getFeeCollector() internal pure returns (address) {
-        return _getFeeCollectorERC2771();
+    function _getMsgSender() internal view returns (address) {
+        return
+            _isGelatoRelayERC2771(msg.sender)
+                ? _getMsgSenderFeeCollectorERC2771()
+                : msg.sender;
     }
 
-    function _getMsgSender() internal pure returns (address) {
-        return _getMsgSenderFeeCollectorERC2771();
+    // Only use with GelatoRelayERC2771Base onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    function _getFeeCollector() internal pure returns (address) {
+        return _getFeeCollectorERC2771();
     }
 }

@@ -24,9 +24,8 @@ function __getFeeCollector() pure returns (address feeCollector) {
  * 20bytes start offsets from calldatasize:
  *    feeCollector: -20
  */
-/// @dev Do not use with GelatoRelayFeeCollector - pick only one
+/// @dev Do not use with GelatoRelayContext - pick only one
 abstract contract GelatoRelayFeeCollector is GelatoRelayBase {
-    // Do not confuse with OZ Context.sol _msgData()
     function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)

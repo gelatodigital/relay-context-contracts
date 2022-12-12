@@ -67,7 +67,6 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
-    // Do not confuse with OZ Context.sol _msgData()
     function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
