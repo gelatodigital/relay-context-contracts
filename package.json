@@ -10,7 +10,7 @@
     "contracts/constants",
     "contracts/functions",
     "contracts/lib",
-    "contracts/vendor",
+    "contracts/types",
     "contracts/GelatoRelayContext.sol",
     "contracts/GelatoRelayContextERC2771.sol",
     "contracts/GelatoRelayFeeCollector.sol",
