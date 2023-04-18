@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import {GELATO_RELAY} from "../constants/GelatoRelay.sol";
+import {GELATO_RELAY, GELATO_RELAY_ZKSYNC} from "../constants/GelatoRelay.sol";
 
 abstract contract GelatoRelayBase {
     modifier onlyGelatoRelay() {
@@ -9,7 +9,11 @@ abstract contract GelatoRelayBase {
         _;
     }
 
-    function _isGelatoRelay(address _forwarder) internal pure returns (bool) {
+    function _isGelatoRelay(address _forwarder) internal view returns (bool) {
+        // Use another address on zkSync
+        if (block.chainid == 324 || block.chainid == 280) {
+            return _forwarder == GELATO_RELAY_ZKSYNC;
+        }
         return _forwarder == GELATO_RELAY;
     }
 }
