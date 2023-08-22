@@ -71,12 +71,14 @@ function _getMsgSenderRelayContextERC2771() pure returns (address _msgSender) {
 abstract contract GelatoRelayContextERC2771 is GelatoRelayERC2771Base {
     using TokenUtils for address;
 
-    // DANGER! Only use with onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
     function _transferRelayFee() internal {
         _getFeeToken().transfer(_getFeeCollector(), _getFee());
     }
 
-    // DANGER! Only use with onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
     function _transferRelayFeeCapped(uint256 _maxFee) internal {
         uint256 fee = _getFee();
         require(
@@ -100,17 +102,20 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayERC2771Base {
                 : msg.sender;
     }
 
-    // Only use with GelatoRelayERC2771Base onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    // Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
     function _getFeeCollector() internal pure returns (address) {
         return _getFeeCollectorRelayContextERC2771();
     }
 
-    // Only use with GelatoRelayERC2771Base onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    // Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
     function _getFeeToken() internal pure returns (address) {
         return _getFeeTokenRelayContextERC2771();
     }
 
-    // Only use with GelatoRelayERC2771Base onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    // Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
     function _getFee() internal pure returns (uint256) {
         return _getFeeRelayContextERC2771();
     }

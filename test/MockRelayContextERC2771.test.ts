@@ -257,9 +257,15 @@ describe("Test MockGelatoRelayContextERC2771 Smart Contract", function () {
     );
   });
 
-  it("#6: testOnlyGelatoRelay reverts if not GelatoRelay", async () => {
+  it("#6: testOnlyGelatoRelayERC2771 reverts if not GelatoRelay", async () => {
     await expect(
       mockRelayContextERC2771.testOnlyGelatoRelayERC2771()
-    ).to.be.revertedWith("onlyGelatoRelay");
+    ).to.be.revertedWith("onlyGelatoRelayERC2771");
+  });
+
+  it("#7: testOnlyGelatoRelayConcurrentERC2771 reverts if not GelatoRelay", async () => {
+    await expect(
+      mockRelayContextERC2771.testOnlyGelatoRelayConcurrentERC2771()
+    ).to.be.revertedWith("onlyGelatoRelayConcurrentERC2771");
   });
 });
