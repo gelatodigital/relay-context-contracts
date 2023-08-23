@@ -53,7 +53,8 @@ abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayERC2771Base {
                 : msg.sender;
     }
 
-    // Only use with GelatoRelayERC2771Base onlyGelatoRelayERC2771 or `_isGelatoRelayERC2771` checks
+    // Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
     function _getFeeCollector() internal pure returns (address) {
         return _getFeeCollectorERC2771();
     }
