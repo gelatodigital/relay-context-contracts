@@ -16,7 +16,7 @@ abstract contract GelatoRelayERC2771Base {
 
     modifier onlyGelatoRelayConcurrentERC2771() {
         require(
-            _isGelatoRelayERC2771(msg.sender),
+            _isGelatoRelayConcurrentERC2771(msg.sender),
             "onlyGelatoRelayConcurrentERC2771"
         );
         _;
