@@ -109,7 +109,7 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayERC2771Base {
 
     // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
     // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
-    function _permitTransferFromRelayFeeCapped(
+    function _transferFromRelayFeeCappedWithPermit(
         address _from,
         uint256 _maxFee,
         uint256 _deadline,
@@ -120,7 +120,7 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayERC2771Base {
         uint256 fee = _getFee();
         require(
             fee <= _maxFee,
-            "GelatoRelayContextERC2771._permitTransferFromRelayFeeCapped: maxFee"
+            "GelatoRelayContextERC2771._transferFromRelayFeeCappedWithPermit: maxFee"
         );
 
         address token = _getFeeToken();

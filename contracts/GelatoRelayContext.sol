@@ -85,7 +85,7 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
     }
 
     // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
-    function _permitTransferFromRelayFeeCapped(
+    function _transferFromRelayFeeCappedWithPermit(
         address _from,
         uint256 _maxFee,
         uint256 _deadline,
@@ -96,7 +96,7 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
         uint256 fee = _getFee();
         require(
             fee <= _maxFee,
-            "GelatoRelayContext._permitTransferFromRelayFeeCapped: maxFee"
+            "GelatoRelayContext._transferFromRelayFeeCappedWithPermit: maxFee"
         );
 
         address token = _getFeeToken();
