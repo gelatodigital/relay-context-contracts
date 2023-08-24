@@ -67,6 +67,44 @@ abstract contract GelatoRelayContext is GelatoRelayBase {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
+    // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
+    function _transferFromRelayFee(address _from) internal {
+        _getFeeToken().transferFrom(_from, _getFeeCollector(), _getFee());
+    }
+
+    // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
+    function _transferFromRelayFeeCapped(address _from, uint256 _maxFee)
+        internal
+    {
+        uint256 fee = _getFee();
+        require(
+            fee <= _maxFee,
+            "GelatoRelayContext._transferFromRelayFeeCapped: maxFee"
+        );
+        _getFeeToken().transferFrom(_from, _getFeeCollector(), fee);
+    }
+
+    // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
+    function _permitTransferFromRelayFeeCapped(
+        address _from,
+        uint256 _maxFee,
+        uint256 _deadline,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) internal {
+        uint256 fee = _getFee();
+        require(
+            fee <= _maxFee,
+            "GelatoRelayContext._permitTransferFromRelayFeeCapped: maxFee"
+        );
+
+        address token = _getFeeToken();
+        token.permit(_from, address(this), _maxFee, _deadline, _v, _r, _s);
+
+        token.transferFrom(_from, _getFeeCollector(), fee);
+    }
+
     function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)
