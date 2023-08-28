@@ -14,14 +14,6 @@ abstract contract GelatoRelayERC2771Base {
         _;
     }
 
-    modifier onlyGelatoRelayConcurrentERC2771() {
-        require(
-            _isGelatoRelayConcurrentERC2771(msg.sender),
-            "onlyGelatoRelayConcurrentERC2771"
-        );
-        _;
-    }
-
     function _isGelatoRelayERC2771(address _forwarder)
         internal
         view
@@ -29,20 +21,10 @@ abstract contract GelatoRelayERC2771Base {
     {
         // Use another address on zkSync
         if (block.chainid == 324 || block.chainid == 280) {
-            return _forwarder == GELATO_RELAY_ERC2771_ZKSYNC;
+            return (_forwarder == GELATO_RELAY_ERC2771_ZKSYNC ||
+                _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC);
         }
-        return _forwarder == GELATO_RELAY_ERC2771;
-    }
-
-    function _isGelatoRelayConcurrentERC2771(address _forwarder)
-        internal
-        view
-        returns (bool)
-    {
-        // Use another address on zkSync
-        if (block.chainid == 324 || block.chainid == 280) {
-            return _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC;
-        }
-        return _forwarder == GELATO_RELAY_CONCURRENT_ERC2771;
+        return (_forwarder == GELATO_RELAY_ERC2771 ||
+            _forwarder == GELATO_RELAY_CONCURRENT_ERC2771);
     }
 }

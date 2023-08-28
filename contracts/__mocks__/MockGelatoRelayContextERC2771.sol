@@ -32,12 +32,4 @@ contract MockGelatoRelayContextERC2771 is GelatoRelayContextERC2771 {
 
     // solhint-disable-next-line no-empty-blocks
     function testOnlyGelatoRelayERC2771() external onlyGelatoRelayERC2771 {}
-
-    function testOnlyGelatoRelayConcurrentERC2771()
-        external
-        onlyGelatoRelayConcurrentERC2771
-    // solhint-disable-next-line no-empty-blocks
-    {
-
-    }
 }
