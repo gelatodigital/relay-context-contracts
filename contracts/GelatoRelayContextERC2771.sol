@@ -88,6 +88,49 @@ abstract contract GelatoRelayContextERC2771 is GelatoRelayERC2771Base {
         _getFeeToken().transfer(_getFeeCollector(), fee);
     }
 
+    // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
+    function _transferFromRelayFee() internal {
+        _getFeeToken().transferFrom(
+            _getMsgSender(),
+            _getFeeCollector(),
+            _getFee()
+        );
+    }
+
+    // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
+    function _transferFromRelayFeeCapped(uint256 _maxFee) internal {
+        uint256 fee = _getFee();
+        require(
+            fee <= _maxFee,
+            "GelatoRelayContextERC2771._transferFromRelayFeeCapped: maxFee"
+        );
+        _getFeeToken().transferFrom(_getMsgSender(), _getFeeCollector(), fee);
+    }
+
+    // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
+    // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks
+    function _transferFromRelayFeeCappedWithPermit(
+        uint256 _maxFee,
+        uint256 _deadline,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) internal {
+        uint256 fee = _getFee();
+        require(
+            fee <= _maxFee,
+            "GelatoRelayContextERC2771._transferFromRelayFeeCappedWithPermit: maxFee"
+        );
+
+        address from = _getMsgSender();
+        address token = _getFeeToken();
+
+        token.permit(from, address(this), _maxFee, _deadline, _v, _r, _s);
+        token.transferFrom(from, _getFeeCollector(), fee);
+    }
+
     function _getMsgData() internal view virtual returns (bytes calldata) {
         return
             _isGelatoRelayERC2771(msg.sender)

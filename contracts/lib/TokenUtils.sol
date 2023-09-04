@@ -2,18 +2,43 @@
 pragma solidity ^0.8.1;
 
 import {NATIVE_TOKEN} from "../constants/Tokens.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {
+    IERC20Permit
+} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import {
     SafeERC20
 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 library TokenUtils {
     using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20Permit;
 
     modifier onlyERC20(address _token) {
         require(_token != NATIVE_TOKEN, "TokenUtils.onlyERC20");
         _;
+    }
+
+    function permit(
+        address _token,
+        address _owner,
+        address _spender,
+        uint256 _value,
+        uint256 _deadline,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) internal onlyERC20(_token) {
+        IERC20Permit(_token).safePermit(
+            _owner,
+            _spender,
+            _value,
+            _deadline,
+            _v,
+            _r,
+            _s
+        );
     }
 
     function transfer(
