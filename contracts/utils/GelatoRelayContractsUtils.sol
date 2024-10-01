@@ -2,76 +2,30 @@
 pragma solidity ^0.8.1;
 
 contract GelatoRelayContractsUtils {
-    mapping(uint256 => bool) internal _v1ChainIds;
 
-    // solhint-disable-next-line function-max-lines
-    constructor() {
-        _v1ChainIds[1] = true;
-        _v1ChainIds[10] = true;
-        _v1ChainIds[25] = true;
-        _v1ChainIds[30] = true;
-        _v1ChainIds[56] = true;
-        _v1ChainIds[100] = true;
-        _v1ChainIds[109] = true;
-        _v1ChainIds[137] = true;
-        _v1ChainIds[183] = true;
-        _v1ChainIds[233] = true;
-        _v1ChainIds[250] = true;
-        _v1ChainIds[314] = true;
-        _v1ChainIds[1088] = true;
-        _v1ChainIds[1101] = true;
-        _v1ChainIds[1135] = true;
-        _v1ChainIds[1284] = true;
-        _v1ChainIds[1285] = true;
-        _v1ChainIds[1729] = true;
-        _v1ChainIds[1829] = true;
-        _v1ChainIds[1833] = true;
-        _v1ChainIds[2039] = true;
-        _v1ChainIds[3776] = true;
-        _v1ChainIds[4202] = true;
-        _v1ChainIds[6398] = true;
-        _v1ChainIds[8453] = true;
-        _v1ChainIds[10200] = true;
-        _v1ChainIds[18231] = true;
-        _v1ChainIds[18233] = true;
-        _v1ChainIds[25327] = true;
-        _v1ChainIds[34443] = true;
-        _v1ChainIds[41455] = true;
-        _v1ChainIds[42069] = true;
-        _v1ChainIds[42161] = true;
-        _v1ChainIds[43114] = true;
-        _v1ChainIds[59144] = true;
-        _v1ChainIds[80002] = true;
-        _v1ChainIds[80002] = true;
-        _v1ChainIds[80084] = true;
-        _v1ChainIds[81457] = true;
-        _v1ChainIds[84532] = true;
-        _v1ChainIds[111188] = true;
-        _v1ChainIds[241120] = true;
-        _v1ChainIds[421614] = true;
-        _v1ChainIds[656476] = true;
-        _v1ChainIds[1261120] = true;
-        _v1ChainIds[6038361] = true;
-        _v1ChainIds[7777777] = true;
-        _v1ChainIds[11155111] = true;
-        _v1ChainIds[11155420] = true;
-        _v1ChainIds[29313331] = true;
-        _v1ChainIds[69658185] = true;
-        _v1ChainIds[89346162] = true;
-        _v1ChainIds[94204209] = true;
-        _v1ChainIds[123420111] = true;
-        _v1ChainIds[168587773] = true;
-        _v1ChainIds[222000222] = true;
-        _v1ChainIds[994873017] = true;
-        _v1ChainIds[1380012617] = true;
-        _v1ChainIds[3155399334] = true;
-        _v1ChainIds[80998896642] = true;
-        _v1ChainIds[88153591557] = true;
+function isV1ChainId(uint256 chainId) public pure returns (bool) {
+    if (chainId == 1 || chainId == 10 || chainId == 25 || chainId == 30 || 
+        chainId == 56 || chainId == 100 || chainId == 109 || chainId == 137 || 
+        chainId == 183 || chainId == 233 || chainId == 250 || chainId == 314 || 
+        chainId == 1088 || chainId == 1101 || chainId == 1135 || chainId == 1284 || 
+        chainId == 1285 || chainId == 1729 || chainId == 1829 || chainId == 1833 || 
+        chainId == 2039 || chainId == 3776 || chainId == 4202 || chainId == 6398 || 
+        chainId == 8453 || chainId == 10200 || chainId == 18231 || chainId == 18233 || 
+        chainId == 25327 || chainId == 34443 || chainId == 41455 || chainId == 42069 || 
+        chainId == 42161 || chainId == 43114 || chainId == 59144 || chainId == 80002 || 
+        chainId == 80084 || chainId == 81457 || chainId == 84532 || chainId == 111188 || 
+        chainId == 241120 || chainId == 421614 || chainId == 656476 || chainId == 1261120 || 
+        chainId == 6038361 || chainId == 7777777 || chainId == 11155111 || chainId == 11155420 || 
+        chainId == 29313331 || chainId == 69658185 || chainId == 89346162 || chainId == 94204209 || 
+        chainId == 123420111 || chainId == 168587773 || chainId == 222000222 || 
+        chainId == 994873017 || chainId == 1380012617 || chainId == 3155399334 || 
+        chainId == 80998896642 || chainId == 88153591557) {
+        return true;
+    } else {
+        return false;
     }
+}
 
-    function isV1ChainId(uint256 chainId) public view returns (bool) {
-        return _v1ChainIds[chainId];
-    }
 
     function isZkSyncChainId(uint256 chainId) public pure returns (bool) {
         if (chainId == 324 || chainId == 280) {
