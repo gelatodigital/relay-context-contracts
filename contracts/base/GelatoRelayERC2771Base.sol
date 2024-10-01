@@ -25,11 +25,11 @@ abstract contract GelatoRelayERC2771Base is GelatoRelayContractsUtils {
         returns (bool)
     {
         // Use another address on zkSync
-        if (isZkSyncChainId(block.chainid)) {
+        if (_isZkSyncChainId) {
             return (_forwarder == GELATO_RELAY_ERC2771_ZKSYNC ||
                 _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC);
         }
-        if (isV1ChainId(block.chainid)) {
+        if (_isV1ChainId) {
             return (_forwarder == GELATO_RELAY_ERC2771_V1 ||
                 _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_V1);
         }
