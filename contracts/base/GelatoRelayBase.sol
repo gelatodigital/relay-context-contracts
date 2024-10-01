@@ -17,10 +17,10 @@ abstract contract GelatoRelayBase is GelatoRelayContractsUtils {
     }
 
     function _isGelatoRelay(address _forwarder) internal view returns (bool) {
-        if (isZkSyncChainId(block.chainid)) {
+        if (_isZkSyncChainId) {
             return _forwarder == GELATO_RELAY_ZKSYNC;
         }
-        if (isV1ChainId(block.chainid)) {
+        if (_isV1ChainId) {
             return _forwarder == GELATO_RELAY_V1;
         }
         return _forwarder == GELATO_RELAY_V2;
