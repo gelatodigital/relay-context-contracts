@@ -15,7 +15,8 @@
     "contracts/GelatoRelayContext.sol",
     "contracts/GelatoRelayContextERC2771.sol",
     "contracts/GelatoRelayFeeCollector.sol",
-    "contracts/GelatoRelayFeeCollectorERC2771.sol"
+    "contracts/GelatoRelayFeeCollectorERC2771.sol",
+    "contracts/utils/GelatoRelayContractsUtils.sol"
   ],
   "scripts": {
     "build": "yarn install && yarn compile && npx tsc",
