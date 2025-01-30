@@ -9,8 +9,10 @@ import {
     GELATO_RELAY_CONCURRENT_ERC2771_V1,
     GELATO_RELAY_ERC2771_V2,
     GELATO_RELAY_CONCURRENT_ERC2771_V2,
-    GELATO_RELAY_ERC2771_ZKSYNC,
-    GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC
+    GELATO_RELAY_ERC2771_ZKSYNC_V1,
+    GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V1,
+    GELATO_RELAY_ERC2771_ZKSYNC_V2,
+    GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V2
 } from "../constants/GelatoRelay.sol";
 
 abstract contract GelatoRelayERC2771Base is GelatoRelayContractsUtils {
@@ -25,9 +27,13 @@ abstract contract GelatoRelayERC2771Base is GelatoRelayContractsUtils {
         returns (bool)
     {
         // Use another address on zkSync
-        if (_isZkSyncChainId) {
-            return (_forwarder == GELATO_RELAY_ERC2771_ZKSYNC ||
-                _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC);
+        if (_isV1ZkSyncChainId) {
+            return (_forwarder == GELATO_RELAY_ERC2771_ZKSYNC_V1 ||
+                _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V1);
+        }
+        if (_isV2ZkSyncChainId) {
+            return (_forwarder == GELATO_RELAY_ERC2771_ZKSYNC_V2 ||
+                _forwarder == GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V2);
         }
         if (_isV1ChainId) {
             return (_forwarder == GELATO_RELAY_ERC2771_V1 ||
