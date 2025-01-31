@@ -3,11 +3,13 @@ pragma solidity ^0.8.1;
 
 abstract contract GelatoRelayContractsUtils {
     bool internal immutable _isV1ChainId;
-    bool internal immutable _isZkSyncChainId;
+    bool internal immutable _isV1ZkSyncChainId;
+    bool internal immutable _isV2ZkSyncChainId;
 
     constructor() {
         _isV1ChainId = __isV1ChainId(block.chainid);
-        _isZkSyncChainId = __isZkSyncChainId(block.chainid);
+        _isV1ZkSyncChainId = __isV1ZkSyncChainId(block.chainid);
+        _isV2ZkSyncChainId = __isV2ZkSyncChainId(block.chainid);
     }
 
     // solhint-disable-next-line function-max-lines
@@ -80,8 +82,15 @@ abstract contract GelatoRelayContractsUtils {
         }
     }
 
-    function __isZkSyncChainId(uint256 chainId) private pure returns (bool) {
+    function __isV1ZkSyncChainId(uint256 chainId) private pure returns (bool) {
         if (chainId == 324 || chainId == 280) {
+            return true;
+        }
+        return false;
+    }
+
+    function __isV2ZkSyncChainId(uint256 chainId) private pure returns (bool) {
+        if (chainId == 11124 || chainId == 2741) {
             return true;
         }
         return false;

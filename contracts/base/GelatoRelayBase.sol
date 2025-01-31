@@ -7,7 +7,8 @@ import {
 import {
     GELATO_RELAY_V1,
     GELATO_RELAY_V2,
-    GELATO_RELAY_ZKSYNC
+    GELATO_RELAY_ZKSYNC_V1,
+    GELATO_RELAY_ZKSYNC_V2
 } from "../constants/GelatoRelay.sol";
 
 abstract contract GelatoRelayBase is GelatoRelayContractsUtils {
@@ -17,8 +18,11 @@ abstract contract GelatoRelayBase is GelatoRelayContractsUtils {
     }
 
     function _isGelatoRelay(address _forwarder) internal view returns (bool) {
-        if (_isZkSyncChainId) {
-            return _forwarder == GELATO_RELAY_ZKSYNC;
+        if (_isV1ZkSyncChainId) {
+            return _forwarder == GELATO_RELAY_ZKSYNC_V1;
+        }
+        if (_isV2ZkSyncChainId) {
+            return _forwarder == GELATO_RELAY_ZKSYNC_V2;
         }
         if (_isV1ChainId) {
             return _forwarder == GELATO_RELAY_V1;
