@@ -30,7 +30,7 @@ library TokenUtils {
         bytes32 _r,
         bytes32 _s
     ) internal onlyERC20(_token) {
-        IERC20Permit(_token).safePermit(
+        IERC20Permit(_token).permit(
             _owner,
             _spender,
             _value,
