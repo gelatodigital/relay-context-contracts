@@ -1,19 +1,81 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
+import {
+    GELATO_RELAY_V1,
+    GELATO_RELAY_V2,
+    GELATO_RELAY_BOTANIX_V2,
+    GELATO_RELAY_ZKSYNC_V1,
+    GELATO_RELAY_ZKSYNC_V2,
+    GELATO_RELAY_ERC2771_V1,
+    GELATO_RELAY_CONCURRENT_ERC2771_V1,
+    GELATO_RELAY_ERC2771_V2,
+    GELATO_RELAY_CONCURRENT_ERC2771_V2,
+    GELATO_RELAY_ERC2771_ZKSYNC_V1,
+    GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V1,
+    GELATO_RELAY_ERC2771_ZKSYNC_V2,
+    GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V2,
+    GELATO_RELAY_ERC2771_BOTANIX_V2,
+    GELATO_RELAY_CONCURRENT_ERC2771_BOTANIX_V2
+} from "../constants/GelatoRelay.sol";
+
 abstract contract GelatoRelayContractsUtils {
-    bool internal immutable _isV1ChainId;
-    bool internal immutable _isV1ZkSyncChainId;
-    bool internal immutable _isV2ZkSyncChainId;
+    address internal immutable _gelatoRelay;
+    address internal immutable _gelatoRelayERC2771;
+    address internal immutable _gelatoRelayConcurrentERC2771;
 
     constructor() {
-        _isV1ChainId = __isV1ChainId(block.chainid);
-        _isV1ZkSyncChainId = __isV1ZkSyncChainId(block.chainid);
-        _isV2ZkSyncChainId = __isV2ZkSyncChainId(block.chainid);
+        (
+            _gelatoRelay,
+            _gelatoRelayERC2771,
+            _gelatoRelayConcurrentERC2771
+        ) = _getRelayAddresses();
+    }
+
+    function _getRelayAddresses()
+        internal
+        view
+        returns (
+            address,
+            address,
+            address
+        )
+    {
+        if (_isBotanixChainId(block.chainid)) {
+            return (
+                GELATO_RELAY_BOTANIX_V2,
+                GELATO_RELAY_ERC2771_BOTANIX_V2,
+                GELATO_RELAY_CONCURRENT_ERC2771_BOTANIX_V2
+            );
+        } else if (_isV1ZkSyncChainId(block.chainid)) {
+            return (
+                GELATO_RELAY_ZKSYNC_V1,
+                GELATO_RELAY_ERC2771_ZKSYNC_V1,
+                GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V1
+            );
+        } else if (_isV2ZkSyncChainId(block.chainid)) {
+            return (
+                GELATO_RELAY_ZKSYNC_V2,
+                GELATO_RELAY_ERC2771_ZKSYNC_V2,
+                GELATO_RELAY_CONCURRENT_ERC2771_ZKSYNC_V2
+            );
+        } else if (_isV1ChainId(block.chainid)) {
+            return (
+                GELATO_RELAY_V1,
+                GELATO_RELAY_ERC2771_V1,
+                GELATO_RELAY_CONCURRENT_ERC2771_V1
+            );
+        } else {
+            return (
+                GELATO_RELAY_V2,
+                GELATO_RELAY_ERC2771_V2,
+                GELATO_RELAY_CONCURRENT_ERC2771_V2
+            );
+        }
     }
 
     // solhint-disable-next-line function-max-lines
-    function __isV1ChainId(uint256 chainId) private pure returns (bool) {
+    function _isV1ChainId(uint256 chainId) private pure returns (bool) {
         if (
             chainId == 1 ||
             chainId == 10 ||
@@ -82,15 +144,22 @@ abstract contract GelatoRelayContractsUtils {
         }
     }
 
-    function __isV1ZkSyncChainId(uint256 chainId) private pure returns (bool) {
+    function _isV1ZkSyncChainId(uint256 chainId) private pure returns (bool) {
         if (chainId == 324 || chainId == 280) {
             return true;
         }
         return false;
     }
 
-    function __isV2ZkSyncChainId(uint256 chainId) private pure returns (bool) {
+    function _isV2ZkSyncChainId(uint256 chainId) private pure returns (bool) {
         if (chainId == 11124 || chainId == 2741) {
+            return true;
+        }
+        return false;
+    }
+
+    function _isBotanixChainId(uint256 chainId) private pure returns (bool) {
+        if (chainId == 3637 || chainId == 3636) {
             return true;
         }
         return false;
