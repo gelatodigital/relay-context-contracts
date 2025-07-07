@@ -1,6 +1,6 @@
 {
   "name": "@gelatonetwork/relay-context",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Solidity and test helpers for implementing GelatoRelayContext",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
