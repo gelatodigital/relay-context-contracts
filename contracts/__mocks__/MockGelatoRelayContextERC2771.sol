@@ -12,6 +12,19 @@ contract MockGelatoRelayContextERC2771 is GelatoRelayContextERC2771 {
         address _msgSender
     );
 
+    constructor(
+        address __gelatoRelayERC2771,
+        address __gelatoRelayConcurrentERC2771
+    )
+        GelatoRelayContextERC2771(
+            __gelatoRelayERC2771,
+            __gelatoRelayConcurrentERC2771
+        )
+    // solhint-disable-next-line no-empty-blocks
+    {
+
+    }
+
     function emitContext() external {
         emit LogMsgData(_getMsgData());
         emit LogContext(

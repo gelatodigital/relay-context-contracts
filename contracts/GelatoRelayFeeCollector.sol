@@ -26,6 +26,9 @@ function __getFeeCollector() pure returns (address feeCollector) {
  */
 /// @dev Do not use with GelatoRelayContext - pick only one
 abstract contract GelatoRelayFeeCollector is GelatoRelayBase {
+    // solhint-disable-next-line no-empty-blocks
+    constructor(address __gelatoRelay) GelatoRelayBase(__gelatoRelay) {}
+
     function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelay(msg.sender)

@@ -53,13 +53,13 @@ function _getMsgSenderRelayContextERC2771() pure returns (address _msgSender) {
 /**
  * @dev Context variant with feeCollector, feeToken, fee, _msgSender appended to msg.data
  * Expects calldata encoding:
-    abi.encodePacked(
-        _data,
-        _feeCollector,
-        _feeToken,
-        _fee,
-        _msgSender
-    );
+ *     abi.encodePacked(
+ *         _data,
+ *         _feeCollector,
+ *         _feeToken,
+ *         _fee,
+ *         _msgSender
+ *     );
  * Therefore, we're expecting 20 + 20 + 32 + 20 = 92 bytes to be appended to normal msgData
  *     feeCollector: - 92 bytes
  *     feeToken: - 72 bytes
@@ -70,6 +70,19 @@ function _getMsgSenderRelayContextERC2771() pure returns (address _msgSender) {
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
 abstract contract GelatoRelayContextERC2771 is GelatoRelayERC2771Base {
     using TokenUtils for address;
+
+    constructor(
+        address __gelatoRelayERC2771,
+        address __gelatoRelayConcurrentERC2771
+    )
+        GelatoRelayERC2771Base(
+            __gelatoRelayERC2771,
+            __gelatoRelayConcurrentERC2771
+        )
+    // solhint-disable-next-line no-empty-blocks
+    {
+
+    }
 
     // DANGER! Only use with onlyGelatoRelayERC2771, onlyGelatoRelayConcurrentERC2771,
     // `_isGelatoRelayERC2771` or `_isGelatoRelayConcurrentERC2771` checks

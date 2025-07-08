@@ -7,6 +7,9 @@ contract MockGelatoRelayContext is GelatoRelayContext {
     event LogMsgData(bytes data);
     event LogContext(address feeCollector, address feeToken, uint256 fee);
 
+    // solhint-disable-next-line no-empty-blocks
+    constructor(address __gelatoRelay) GelatoRelayContext(__gelatoRelay) {}
+
     function emitContext() external {
         emit LogMsgData(_getMsgData());
         emit LogContext(_getFeeCollector(), _getFeeToken(), _getFee());

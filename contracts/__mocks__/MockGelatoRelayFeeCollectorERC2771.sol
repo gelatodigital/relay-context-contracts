@@ -9,6 +9,19 @@ contract MockGelatoRelayFeeCollectorERC2771 is GelatoRelayFeeCollectorERC2771 {
     event LogFeeCollector(address feeCollector);
     event LogMsgSender(address _msgSender);
 
+    constructor(
+        address __gelatoRelayERC2771,
+        address __gelatoRelayConcurrentERC2771
+    )
+        GelatoRelayFeeCollectorERC2771(
+            __gelatoRelayERC2771,
+            __gelatoRelayConcurrentERC2771
+        )
+    // solhint-disable-next-line no-empty-blocks
+    {
+
+    }
+
     function emitFeeCollector() external {
         emit LogFeeCollector(_getFeeCollector());
     }

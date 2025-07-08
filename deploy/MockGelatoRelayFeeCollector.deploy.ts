@@ -1,6 +1,6 @@
 import { deployments, getNamedAccounts } from "hardhat";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
@@ -11,8 +11,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     process.exit(1);
   }
 
+  const mockRelay = await deployments.get("MockRelay");
+
   await deploy("MockGelatoRelayFeeCollector", {
     from: deployer,
+    args: [mockRelay.address],
   });
 };
 

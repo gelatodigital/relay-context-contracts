@@ -39,6 +39,19 @@ function _getMsgSenderFeeCollectorERC2771() pure returns (address _msgSender) {
 
 /// @dev Do not use with GelatoRelayFeeCollectorERC2771 - pick only one
 abstract contract GelatoRelayFeeCollectorERC2771 is GelatoRelayERC2771Base {
+    constructor(
+        address __gelatoRelayERC2771,
+        address __gelatoRelayConcurrentERC2771
+    )
+        GelatoRelayERC2771Base(
+            __gelatoRelayERC2771,
+            __gelatoRelayConcurrentERC2771
+        )
+    // solhint-disable-next-line no-empty-blocks
+    {
+
+    }
+
     function _getMsgData() internal view returns (bytes calldata) {
         return
             _isGelatoRelayERC2771(msg.sender)

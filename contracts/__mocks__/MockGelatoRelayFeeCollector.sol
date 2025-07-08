@@ -6,6 +6,9 @@ import {GelatoRelayFeeCollector} from "../GelatoRelayFeeCollector.sol";
 contract MockGelatoRelayFeeCollector is GelatoRelayFeeCollector {
     event LogFeeCollector(address feeCollector);
 
+    // solhint-disable-next-line no-empty-blocks
+    constructor(address __gelatoRelay) GelatoRelayFeeCollector(__gelatoRelay) {}
+
     function emitFeeCollector() external {
         emit LogFeeCollector(_getFeeCollector());
     }

@@ -52,6 +52,9 @@ function _getFeeRelayContext() pure returns (uint256 fee) {
 abstract contract GelatoRelayContext is GelatoRelayBase {
     using TokenUtils for address;
 
+    // solhint-disable-next-line no-empty-blocks
+    constructor(address __gelatoRelay) GelatoRelayBase(__gelatoRelay) {}
+
     // DANGER! Only use with onlyGelatoRelay `_isGelatoRelay` before transferring
     function _transferRelayFee() internal {
         _getFeeToken().transfer(_getFeeCollector(), _getFee());
